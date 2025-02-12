@@ -7,7 +7,7 @@ timestamps {
 
             try {
                 stage ("Git Checkout") {
-                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-to-github', url: 'https://github.com/yagza/simple-php-website.git']])
+                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-to-github', url: '']])
                 }
             }
 
