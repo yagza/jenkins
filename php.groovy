@@ -1,6 +1,6 @@
 timestamps {
     ansiColor('xterm') {
-        node('blah') {
+        node(env.ratata) {
 
             env.PROJECT_NAME = "project_pso"
             env.PROJECT_VERSION = "0.0.1"
