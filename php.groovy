@@ -1,5 +1,5 @@
 timestamps {
-    ansiColor('xterm') {
+//    ansiColor('xterm') {
         node(JenkinsSlaveNode) {
 
             env.PROJECT_NAME = "project_pso"
@@ -22,5 +22,5 @@ timestamps {
             }
             
         }
-    }
+//    }
 }
