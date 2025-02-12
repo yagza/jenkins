@@ -5,9 +5,22 @@ timestamps {
             env.PROJECT_NAME = "project_pso"
             env.PROJECT_VERSION = "0.0.1"
 
-            stage ('Git Checkout') {
-                checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
+            try {
+
+                stage ('Git Checkout') {
+                    checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
+                }
+
             }
+
+            catch (exception) {
+                throw exception
+            }
+
+            finally {
+                println("Clean something")
+            }
+            
         }
     }
 }
