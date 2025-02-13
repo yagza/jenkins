@@ -27,15 +27,12 @@ timestamps {
 */
 
 
+/*
                     def version = readFile "composer.json"
                     echo version
-/*
+*/
 // with plugin Pipeline Utility Steps
                     def object = readJSON file: "${WORKSPACE}/composer.json"
-                    echo "Parsed object: ${object}"
-                    echo object.type
-                    echo object.version
-
 
                     assert object instanceof Map
                     if (object.name != null ) {
@@ -45,7 +42,7 @@ timestamps {
                     if (object.version != null ) {
                         env.PROJECT_VERSION = object.version
                     }
-*/
+
                 }
             }
 
