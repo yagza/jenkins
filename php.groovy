@@ -13,7 +13,7 @@ timestamps {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
                     def jsonSlurper = new groovy.json.JsonSlurper()
-                    def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php","type": "website","version": "1.0.1"}')
+                    def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php"}')
                     echo object.name
 
                     def version = readFile "${WORKSPACE}/version.txt"
