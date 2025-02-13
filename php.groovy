@@ -14,8 +14,9 @@ timestamps {
 
 
                     def jsonSlurper = new groovy.json.JsonSlurper()
-                    def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php"}')
+                    def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php","type": "website","version": "1.0.1"}')
                     echo object.name
+                    echo object.version
 
 //                    def jsonSlurper = new JsonSlurper()
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
