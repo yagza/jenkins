@@ -14,7 +14,7 @@ timestamps {
 
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def object = jsonSlurper.parseText('{"key": "value"}')
-                    echo json.key
+                    echo object.key
 
 //                    def jsonSlurper = new JsonSlurper()
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
