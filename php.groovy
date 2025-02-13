@@ -17,17 +17,18 @@ timestamps {
 //                    echo object.key
 
 //                    def jsonSlurper = new JsonSlurper()
-                    String fileContents = new File("${WORKSPACE}/composer.json").getText('UTF-8')
-                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
-
-                    assert object instanceof Map
-                    if (object.name != null ) {
-                        env.PROJECT_NAME = object.name.replaceAll("/","_")
-                    }
-
-                    if (object.version != null ) {
-                        env.PROJECT_VERSION = object.version
-                    }
+                    def version = readFile "${env.WORKSPACE}/composer.json"
+//                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
+//
+//                    assert object instanceof Map
+//                    if (object.name != null ) {
+//                        env.PROJECT_NAME = object.name.replaceAll("/","_")
+//                    }
+//
+//                    if (object.version != null ) {
+//                        env.PROJECT_VERSION = object.version
+//                    }
+                    echo version
 
                 }
 
