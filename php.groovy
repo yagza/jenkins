@@ -27,6 +27,9 @@ timestamps {
 */
 
 
+                    def version = readFile "composer.json"
+                    echo version
+/*
 // with plugin Pipeline Utility Steps
                     def object = readJSON file: "${WORKSPACE}/composer.json"
                     echo "Parsed object: ${object}"
@@ -44,7 +47,7 @@ timestamps {
                     }
 
                 }
-
+*/
             }
 
             catch (exception) {
