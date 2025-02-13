@@ -13,11 +13,12 @@ timestamps {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
                     def jsonSlurper = new groovy.json.JsonSlurper()
-                    def object = jsonSlurper.parseText('{"key": "value"}')
-                    echo object.key
+//                    def object = jsonSlurper.parseText('{"key": "value"}')
+//                    echo object.key
 
 //                    def jsonSlurper = new JsonSlurper()
-//                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
+                    String fileContents = new File("${WORKSPACE}/composer.json").getText('UTF-8')
+                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 
                     assert object instanceof Map
                     if (object.name != null ) {
