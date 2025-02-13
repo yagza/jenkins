@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 timestamps {
 //    ansiColor('xterm') {
         node(JenkinsSlaveNode) {
