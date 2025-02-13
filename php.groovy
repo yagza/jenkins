@@ -17,9 +17,6 @@ timestamps {
                     def object = jsonSlurper.parseText('{"key": "value"}')
                     echo object.key
 
-                    def version = readFile "${WORKSPACE}/version.txt"
-                    echo version
-                    
 //                    def jsonSlurper = new JsonSlurper()
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 //
