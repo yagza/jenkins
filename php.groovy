@@ -12,16 +12,16 @@ timestamps {
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
-                    def jsoncomposer = new JsonSlurper()
-                    def parsedcomposer = jsoncomposer.parseText(readFile("${WORKSPACE}/composer.json"))
+                    def jsonSlurper = new JsonSlurper()
+                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 
-                    assert parsedcomposer instanceof Map
-                    if (parsedcomposer.name != null ) {
-                        env.PROJECT_NAME = parsedcomposer.name.replaceAll("/","_")
+                    assert object instanceof Map
+                    if (object.name != null ) {
+                        env.PROJECT_NAME = object.name.replaceAll("/","_")
                     }
 
-                    if (parsedcomposer.version != null ) {
-                        env.PROJECT_VERSION = parsedcomposer.version
+                    if (object.version != null ) {
+                        env.PROJECT_VERSION = object.version
                     }
 
                 }
