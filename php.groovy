@@ -12,11 +12,13 @@ timestamps {
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
-
-                    def jsonSlurper = new groovy.json.JsonSlurper()
+/* These are works normally
+*/
+                    def jsonSlurper = new JsonSlurper()
                     def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php","type": "website","version": "1.0.1"}')
                     echo object.name
                     echo object.version
+
 
 //                    def jsonSlurper = new JsonSlurper()
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
