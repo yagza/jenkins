@@ -13,7 +13,7 @@ timestamps {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
                     def jsonSlurper = new groovy.json.JsonSlurper()
-                    def object = jsonSlurper.parseText('{"key": "trrrrrr"}')
+                    def object = jsonSlurper.parseText('{"key": "value"}')
 //                    def object = jsonSlurper.parseText('{"name": "Goblin"}')
                     echo object.key
 
