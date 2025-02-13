@@ -12,12 +12,14 @@ timestamps {
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
-//                    def jsonSlurper = new groovy.json.JsonSlurper()
-//                    def object = jsonSlurper.parseText('{"key": "value"}')
-//                    echo object.key
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php","type": "website","version": "1.0.1"}')
+                    echo object.name
+
+                    def version = readFile "${WORKSPACE}/version.txt"
+                    echo version
 
 //                    def jsonSlurper = new JsonSlurper()
-                    def version = readFile "${WORKSPACE}/version.txt"
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 //
 //                    assert object instanceof Map
@@ -28,7 +30,6 @@ timestamps {
 //                    if (object.version != null ) {
 //                        env.PROJECT_VERSION = object.version
 //                    }
-                    echo version
 
                 }
 
