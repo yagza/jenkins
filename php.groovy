@@ -12,8 +12,12 @@ timestamps {
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
-                    def jsonSlurper = new JsonSlurper()
-                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def object = jsonSlurper.parseText('{"key": "value"}')
+                    echo json.key
+
+//                    def jsonSlurper = new JsonSlurper()
+//                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 
                     assert object instanceof Map
                     if (object.name != null ) {
