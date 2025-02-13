@@ -34,10 +34,9 @@ timestamps {
 
             finally {
                 println("Clean something")
-                println("env.PROJECT_NAME")
-                println("env.PROJECT_VERSION")
+                println(env.PROJECT_NAME)
+                println(env.PROJECT_VERSION)
             }
             
         }
-//    }
-}
+    }
