@@ -26,7 +26,9 @@ timestamps {
                     echo object.version
 */
 
-                    def object = readJSON file: 'composer.json'
+
+// with plugin Pipeline Utility Steps
+                    def object = readJSON file: "${WORKSPACE}/composer.json"
                     echo "Parsed object: ${object}"
                     echo object.type
                     echo object.version
