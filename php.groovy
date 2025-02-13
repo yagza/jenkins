@@ -12,9 +12,9 @@ timestamps {
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
+
                     def jsonSlurper = new groovy.json.JsonSlurper()
                     def object = jsonSlurper.parseText('{"key": "value"}')
-//                    def object = jsonSlurper.parseText('{"name": "Goblin"}')
                     echo object.key
 
                     def version = readFile "${WORKSPACE}/version.txt"
