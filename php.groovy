@@ -45,9 +45,8 @@ timestamps {
                     if (object.version != null ) {
                         env.PROJECT_VERSION = object.version
                     }
-
-                }
 */
+                }
             }
 
             catch (exception) {
