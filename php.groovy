@@ -17,7 +17,7 @@ timestamps {
 //                    echo object.key
 
 //                    def jsonSlurper = new JsonSlurper()
-                    def version = readFile "version.txt"
+                    def version = readFile "${WORKSPACE}/version.txt"
 //                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
 //
 //                    assert object instanceof Map
