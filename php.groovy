@@ -13,9 +13,14 @@ timestamps {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
 /* These are works normally
-*/
                     def jsonSlurper = new JsonSlurper()
                     def object = jsonSlurper.parseText('{"name": "Goblin_inc/simple-php","type": "website","version": "1.0.1"}')
+                    echo object.type
+                    echo object.version
+*/
+
+                    def jsonSlurper = new JsonSlurper()
+                    def object = jsonSlurper.parseText(readFile('composer.json'))
                     echo object.type
                     echo object.version
 
