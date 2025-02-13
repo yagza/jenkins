@@ -19,19 +19,13 @@ timestamps {
                     echo object.version
 */
 
-                script {
-                    // Создаём JsonSlurper локально
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-
-                    // Читаем файл
-                    def jsonText = readFile('composer.json')
-
-                    // Парсим JSON
-                    def object = jsonSlurper.parseText(jsonText)
-
-                    // Выводим результат
+                    // Используем readJSON для парсинга JSON
+                    def object = readJSON file: 'composer.json'
+        
+                    // Используем результат
                     echo "Parsed object: ${object}"
-                }
+                    echo object.type
+                    echo object.version
 
 //                    def jsonSlurper = new JsonSlurper()
 //                    def object = jsonSlurper.parseText(readFile('composer.json'))
