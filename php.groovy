@@ -9,6 +9,19 @@ timestamps {
 
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
+
+                    def jsoncomposer = new JsonSlurper()
+                    def parsedcomposer = jsoncomposer.parseText(readFile("$WORKSPACE/composer.json"))
+
+                    assert parsedcomposer instanceof Map
+                    if (parsedcomposer.name != null ) {
+                        env.PROJECT_NAME = parsedcomposer.name.replaceAll("/","_")
+                    }
+
+                    if (parsedcomposer.version != null ) {
+                        env.PROJECT_VERSION = parsedcomposer.version
+                    }
+
                 }
 
             }
@@ -19,6 +32,8 @@ timestamps {
 
             finally {
                 println("Clean something")
+                println("env.PROJECT_NAME")
+                println("env.PROJECT_VERSION")
             }
             
         }
