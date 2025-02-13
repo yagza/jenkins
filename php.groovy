@@ -19,31 +19,27 @@ timestamps {
                     echo object.version
 */
 
-                    // Используем readJSON для парсинга JSON
+/* These aren't   - Caused: java.io.NotSerializableException: groovy.json.JsonSlurper
+                    def jsonSlurper = new JsonSlurper()
+                    def object = jsonSlurper.parseText(readFile('composer.json'))
+                    echo object.type
+                    echo object.version
+*/
+
                     def object = readJSON file: 'composer.json'
-        
-                    // Используем результат
                     echo "Parsed object: ${object}"
                     echo object.type
                     echo object.version
 
-//                    def jsonSlurper = new JsonSlurper()
-//                    def object = jsonSlurper.parseText(readFile('composer.json'))
-//                    echo object.type
-//                    echo object.version
 
+                    assert object instanceof Map
+                    if (object.name != null ) {
+                        env.PROJECT_NAME = object.name.replaceAll("/","_")
+                    }
 
-//                    def jsonSlurper = new JsonSlurper()
-//                    def object = jsonSlurper.parseText(readFile("${WORKSPACE}/composer.json"))
-//
-//                    assert object instanceof Map
-//                    if (object.name != null ) {
-//                        env.PROJECT_NAME = object.name.replaceAll("/","_")
-//                    }
-//
-//                    if (object.version != null ) {
-//                        env.PROJECT_VERSION = object.version
-//                    }
+                    if (object.version != null ) {
+                        env.PROJECT_VERSION = object.version
+                    }
 
                 }
 
