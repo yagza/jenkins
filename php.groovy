@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 
 timestamps {
-//    ansiColor('xterm') {
+    ansiColor('xterm') {
         node(JenkinsSlaveNode) {
 
             env.PROJECT_NAME = "project_pso"
@@ -60,7 +60,7 @@ timestamps {
 
 
                 stage('Get old tag') {
-                    script {
+                    if (env.FIRST_DEPLOY == 'true') {
                         try {
                             // Получаем тег текущего запущенного контейнера
                             OLD_TAG = sh(
@@ -72,52 +72,47 @@ timestamps {
                             echo "No running container found or failed to get old tag: ${e}"
                             OLD_TAG = 'latest' // Fallback, если контейнер не найден
                         }
+                    } else {
+                        echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
                     }
                 }
         
                 stage('Stop old container') {
-                    script {
+                    if (env.FIRST_DEPLOY == 'true') {
                         try {
                             sh "docker rm ${env.PROJECT_NAME} -f"
                         } catch (Exception e) {
                             echo "No running container found or failed to stop/remove: ${e}"
                         }
+                    } else {
+                        echo "Skipping 'Stop old Container' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
                     }
                 }
 
                 stage('Run New Version') {
-                    if (env.FIRST_DEPLOY == 'false') {
-                        try {
-                            MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
-                            echo 'you may try to connect http://10.0.0.146:8080'
-                        } catch (Exception e) {
-                            echo "Failed to start new container: ${e}"
-                            currentBuild.result = 'FAILURE'
-                            error "Failed to start new container"
-                        }
-                    } else {
-                        echo "Skipping 'Run New Version' stage because FIRST_DEPLOY is not ${env.FIRST_DEPLOY}"
+                    try {
+                        MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
+                        echo 'you may try to connect http://10.0.0.146:8080'
+                    } catch (Exception e) {
+                        echo "Failed to start new container: ${e}"
+                        currentBuild.result = 'FAILURE'
+                        error "Failed to start new container"
                     }
                 }
        
                 stage('Health check') {
-                    script {
-                        try {
-                            // Пример проверки здоровья через curl
-                            sh "curl --fail http://localhost:8080"
-                        } catch (Exception e) {
-                            echo "Health check failed: ${e}"
-                            currentBuild.result = 'FAILURE'
-                            error "Health check failed"
-                        }
+                    try {
+                        // Пример проверки здоровья через curl
+                        sh "curl --fail http://localhost:8080"
+                    } catch (Exception e) {
+                        echo "Health check failed: ${e}"
+                        currentBuild.result = 'FAILURE'
+                        error "Health check failed"
                     }
                 }
         
                 stage('Rollback if failed') {
-                    when {
-                        expression { env.FIRST_DEPLOY == false }
-                    }
-                    script {
+                    if (env.FIRST_DEPLOY == 'true') {
                         if (currentBuild.result == 'FAILURE') {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
@@ -129,7 +124,10 @@ timestamps {
                                 error "Failed to rollback"
                             }
                         }
+                    } else {
+                        echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
                     }
                 }
+            }
         }
     }
