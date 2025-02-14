@@ -7,8 +7,6 @@ timestamps {
             env.PROJECT_NAME = "project_pso"
             env.PROJECT_VERSION = "0.0.1"
 
-            try {
-
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
@@ -55,17 +53,84 @@ timestamps {
                     }
                 }
 
-            }
+                stage ('Clear local registry') {
+                    sh "docker system prune -a -f"
+                }
 
-            catch (exception) {
-                throw exception
-            }
 
-            finally {
-                println("Clean something")
-                println(env.PROJECT_NAME)
-                println(env.PROJECT_VERSION)
-            }
-            
+
+                stage('Get old tag') {
+                    script {
+                        try {
+                            // Получаем тег текущего запущенного контейнера
+                            OLD_TAG = sh(
+                                script: "docker inspect --format='{{.Config.Image}}' ${env.PROJECT_NAME} | awk -F':' '{print \$2}'",
+                                returnStdout: true
+                            ).trim()
+                            echo "Current running container tag: ${OLD_TAG}"
+                        } catch (Exception e) {
+                            echo "No running container found or failed to get old tag: ${e}"
+                            OLD_TAG = 'latest' // Fallback, если контейнер не найден
+                        }
+                    }
+                }
+        
+                stage('Stop old container') {
+                    script {
+                        try {
+                            sh "docker rm ${env.PROJECT_NAME} -f"
+                        } catch (Exception e) {
+                            echo "No running container found or failed to stop/remove: ${e}"
+                        }
+                    }
+                }
+
+                stage('Run New Version') {
+                    when {
+                        expression { env.FIRST_DEPLOY == false }
+                    }
+                    script {
+                        try {
+                            MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
+                            echo 'you may try to connect http://10.0.0.146:8080'
+                        } catch (Exception e) {
+                            echo "Failed to start new container: ${e}"
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to start new container"
+                        }
+                    }
+                }
+       
+                stage('Health check') {
+                    script {
+                        try {
+                            // Пример проверки здоровья через curl
+                            sh "curl --fail http://localhost:8080"
+                        } catch (Exception e) {
+                            echo "Health check failed: ${e}"
+                            currentBuild.result = 'FAILURE'
+                            error "Health check failed"
+                        }
+                    }
+                }
+        
+                stage('Rollback if failed') {
+                    when {
+                        expression { env.FIRST_DEPLOY == false }
+                    }
+                    script {
+                        if (currentBuild.result == 'FAILURE') {
+                            echo "Rolling back to previous version: ${OLD_TAG}"
+                            try {
+                                sh "docker stop ${APP_NAME}"
+                                sh "docker rm ${APP_NAME}"
+                                sh "docker run -d --name ${APP_NAME} -p 8080:8080 ${DOCKER_REGISTRY}/${APP_NAME}:${OLD_TAG}"
+                            } catch (Exception e) {
+                                echo "Failed to rollback: ${e}"
+                                error "Failed to rollback"
+                            }
+                        }
+                    }
+                }
         }
     }
