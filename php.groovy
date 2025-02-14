@@ -86,19 +86,14 @@ timestamps {
                 }
 
                 stage('Run New Version') {
-                    when {
-                        expression { env.FIRST_DEPLOY == false }
-                    }
-                    steps {
-                        script {
-                            try {
-                                MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
-                                echo 'you may try to connect http://10.0.0.146:8080'
-                            } catch (Exception e) {
-                                echo "Failed to start new container: ${e}"
-                                currentBuild.result = 'FAILURE'
-                                error "Failed to start new container"
-                            }
+                    if (env.FIRST_DEPLOY == 'false') {
+                        try {
+                            MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
+                            echo 'you may try to connect http://10.0.0.146:8080'
+                        } catch (Exception e) {
+                            echo "Failed to start new container: ${e}"
+                            currentBuild.result = 'FAILURE'
+                            error "Failed to start new container"
                         }
                     }
                 }
