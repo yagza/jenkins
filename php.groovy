@@ -127,7 +127,7 @@ timestamps {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
                                 sh "docker rm ${env.PROJECT_NAME} -f"
-                                docker.image("${env.PROJECT_NAME}:${OLD_TAG}").withRun("--name ${env.PROJECT_NAME} -p 8080:8080")
+                                sh "docker run -d --name ${env.PROJECT_NAME} -p 8080:8080 ${env.PROJECT_NAME}:${OLD_TAG}"
                             } catch (Exception e) {
                                 echo "Failed to rollback: ${e}"
                                 error "Failed to rollback"
