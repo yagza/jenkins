@@ -42,7 +42,7 @@ timestamps {
                 }
 
                 stage('Build image') {
-                    MyApp = docker.build("yagza/${env.PROJECT_NAME}:${env.PROJECT_VERSION}")
+                    MyApp = docker.build("yagza/${PROJECT_NAME}:${PROJECT_VERSION}")
                 }
 
                 stage('Push image') {
@@ -60,7 +60,7 @@ timestamps {
                     if (env.FIRST_DEPLOY == 'false') {
                         try {
                             OLD_TAG = sh(
-                                script: "docker inspect --format='{{.Config.Image}}' ${env.PROJECT_NAME} | awk -F':' '{print \$2}'",
+                                script: "docker inspect --format='{{.Config.Image}}' ${PROJECT_NAME} | awk -F':' '{print \$2}'",
                                 returnStdout: true
                             ).trim()
                             echo "Current running container tag: ${OLD_TAG}"
@@ -73,25 +73,25 @@ timestamps {
                             echo "Using fallback tag: ${OLD_TAG}"
                         }
                     } else {
-                        echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
+                        echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
                 }
 
                 stage('Stop old container') {
                     if (env.FIRST_DEPLOY == 'false') {
                         try {
-                            sh "docker rm ${env.PROJECT_NAME} -f"
+                            sh "docker rm ${PROJECT_NAME} -f"
                         } catch (Exception e) {
                             echo "No running container found or failed to stop/remove: ${e}"
                         }
                     } else {
-                        echo "Skipping 'Stop old Container' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
+                        echo "Skipping 'Stop old Container' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
                 }
 
                 stage('Run New Version') {
                     try {
-                        MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
+                        MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
                         echo 'you may try to connect http://10.0.0.146:8080'
                     } catch (Exception e) {
                         echo "Failed to start new container: ${e}"
@@ -115,15 +115,15 @@ timestamps {
                         if (currentBuild.result == 'FAILURE') {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
-                                sh "docker rm ${env.PROJECT_NAME} -f"
-                                sh "docker run -d --name ${env.PROJECT_NAME} -p 8080:8080 yagza/${env.PROJECT_NAME}:${OLD_TAG}"
+                                sh "docker rm ${PROJECT_NAME} -f"
+                                sh "docker run -d --name ${PROJECT_NAME} -p 8080:8080 yagza/${PROJECT_NAME}:${OLD_TAG}"
                             } catch (Exception e) {
                                 echo "Failed to rollback: ${e}"
                                 error "Failed to rollback"
                             }
                         }
                     } else {
-                        echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
+                        echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
                 }
             }
