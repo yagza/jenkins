@@ -95,6 +95,8 @@ timestamps {
                             currentBuild.result = 'FAILURE'
                             error "Failed to start new container"
                         }
+                    } else {
+                        echo "Skipping 'Run New Version' stage because FIRST_DEPLOY is not ${env.FIRST_DEPLOY}"
                     }
                 }
        
