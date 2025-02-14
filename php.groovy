@@ -66,9 +66,13 @@ timestamps {
                                 returnStdout: true
                             ).trim()
                             echo "Current running container tag: ${OLD_TAG}"
+                            if (OLD_TAG == null || OLD_TAG == "") {
+                                throw new Exception("Container not found or tag is empty")
+                            }
                         } catch (Exception e) {
                             echo "No running container found or failed to get old tag: ${e}"
                             OLD_TAG = '1.0.1' // Fallback, если контейнер не найден
+                            echo "Using fallback tag: ${OLD_TAG}"
                         }
                     } else {
                         echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
@@ -96,17 +100,6 @@ timestamps {
                         currentBuild.result = 'FAILURE'
                     }
                 }
-       
-                //stage('Health check') {
-                //    try {
-                //        // Пример проверки здоровья через curl
-                //        sh "curl --fail http://localhost:8080"
-                //    } catch (Exception e) {
-                //        echo "Health check failed: ${e}"
-                //        currentBuild.result = 'FAILURE'
-                //        error "Health check failed"
-                //    }
-                //}
 
                 stage('Health check') {
                     if (currentBuild.result != 'FAILURE') {
