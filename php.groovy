@@ -94,7 +94,6 @@ timestamps {
                     } catch (Exception e) {
                         echo "Failed to start new container: ${e}"
                         currentBuild.result = 'FAILURE'
-                        error "Failed to start new container"
                     }
                 }
        
@@ -110,19 +109,17 @@ timestamps {
                 //}
 
                 stage('Health check') {
-                    steps {
-                        script {
-                            try {
-                                // Пример проверки здоровья через curl
-                                sh "curl --fail http://localhost:8080"
-                            } catch (Exception e) {
-                                echo "Health check failed: ${e}"
-                                currentBuild.result = 'FAILURE' // Отмечаем сборку как неудачную
-                                // Не используем error, чтобы pipeline продолжал выполнение
-                            }
+                    if (currentBuild.result != 'FAILURE') {
+                        try {
+                            // Пример проверки здоровья через curl
+                            sh "curl --fail http://localhost:8080"
+                        } catch (Exception e) {
+                            echo "Health check failed: ${e}"
+                            currentBuild.result = 'FAILURE' // Отмечаем сборку как неудачную
+                            // Не используем error, чтобы pipeline продолжал выполнение
                         }
                     }
-                }                
+                }            
         
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
