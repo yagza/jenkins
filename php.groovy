@@ -98,16 +98,31 @@ timestamps {
                     }
                 }
        
+                //stage('Health check') {
+                //    try {
+                //        // Пример проверки здоровья через curl
+                //        sh "curl --fail http://localhost:8080"
+                //    } catch (Exception e) {
+                //        echo "Health check failed: ${e}"
+                //        currentBuild.result = 'FAILURE'
+                //        error "Health check failed"
+                //    }
+                //}
+
                 stage('Health check') {
-                    try {
-                        // Пример проверки здоровья через curl
-                        sh "curl --fail http://localhost:8080"
-                    } catch (Exception e) {
-                        echo "Health check failed: ${e}"
-                        currentBuild.result = 'FAILURE'
-                        error "Health check failed"
+                    steps {
+                        script {
+                            try {
+                                // Пример проверки здоровья через curl
+                                sh "curl --fail http://localhost:8080"
+                            } catch (Exception e) {
+                                echo "Health check failed: ${e}"
+                                currentBuild.result = 'FAILURE' // Отмечаем сборку как неудачную
+                                // Не используем error, чтобы pipeline продолжал выполнение
+                            }
+                        }
                     }
-                }
+                }                
         
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
