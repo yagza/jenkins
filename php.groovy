@@ -44,6 +44,17 @@ timestamps {
                     }
 
                 }
+
+                stage('Build image') {
+                    MyApp = docker.build("yagza/${env.PROJECT_NAME}:${env.PROJECT_VERSION}")
+                }
+
+                stage('Push image') {
+                    docker.withRegistry(DockerRegistry, DockerhubCreds) {
+                    MyApp.push()
+                    }
+                }
+
             }
 
             catch (exception) {
