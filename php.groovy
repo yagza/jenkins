@@ -57,10 +57,8 @@ timestamps {
                     sh "docker system prune -a -f"
                 }
 
-
-
                 stage('Get old tag') {
-                    if (env.FIRST_DEPLOY == 'true') {
+                    if (env.FIRST_DEPLOY == 'false') {
                         try {
                             // Получаем тег текущего запущенного контейнера
                             OLD_TAG = sh(
@@ -78,7 +76,7 @@ timestamps {
                 }
         
                 stage('Stop old container') {
-                    if (env.FIRST_DEPLOY == 'true') {
+                    if (env.FIRST_DEPLOY == 'false') {
                         try {
                             sh "docker rm ${env.PROJECT_NAME} -f"
                         } catch (Exception e) {
@@ -112,7 +110,7 @@ timestamps {
                 }
         
                 stage('Rollback if failed') {
-                    if (env.FIRST_DEPLOY == 'true') {
+                    if (env.FIRST_DEPLOY == 'false') {
                         if (currentBuild.result == 'FAILURE') {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
