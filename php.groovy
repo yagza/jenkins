@@ -86,10 +86,10 @@ timestamps {
                 }
 
                 stage('Run New Version') {
+                    when {
+                        expression { env.FIRST_DEPLOY == false }
+                    }
                     steps {
-                        when {
-                            expression { env.FIRST_DEPLOY == false }
-                        }
                         script {
                             try {
                                 MyApp.run("--name ${env.PROJECT_NAME} -p 8080:8080")
