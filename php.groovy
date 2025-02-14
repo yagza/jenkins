@@ -23,8 +23,6 @@ timestamps {
                     echo object.type
                     echo object.version
 */
-
-
 /*
                     def version = readFile "composer.json"
                     echo version
@@ -58,9 +56,9 @@ timestamps {
                 }
 
                 stage('Get old tag') {
+                // for rollback purpose
                     if (env.FIRST_DEPLOY == 'false') {
                         try {
-                            // Получаем тег текущего запущенного контейнера
                             OLD_TAG = sh(
                                 script: "docker inspect --format='{{.Config.Image}}' ${env.PROJECT_NAME} | awk -F':' '{print \$2}'",
                                 returnStdout: true
@@ -71,14 +69,14 @@ timestamps {
                             }
                         } catch (Exception e) {
                             echo "No running container found or failed to get old tag: ${e}"
-                            OLD_TAG = '1.0.1' // Fallback, если контейнер не найден
+                            OLD_TAG = '1.0.1'
                             echo "Using fallback tag: ${OLD_TAG}"
                         }
                     } else {
                         echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
                     }
                 }
-        
+
                 stage('Stop old container') {
                     if (env.FIRST_DEPLOY == 'false') {
                         try {
@@ -104,16 +102,14 @@ timestamps {
                 stage('Health check') {
                     if (currentBuild.result != 'FAILURE') {
                         try {
-                            // Пример проверки здоровья через curl
                             sh "curl --fail http://localhost:8080"
                         } catch (Exception e) {
                             echo "Health check failed: ${e}"
-                            currentBuild.result = 'FAILURE' // Отмечаем сборку как неудачную
-                            // Не используем error, чтобы pipeline продолжал выполнение
+                            currentBuild.result = 'FAILURE'
                         }
                     }
                 }            
-        
+
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
                         if (currentBuild.result == 'FAILURE') {
