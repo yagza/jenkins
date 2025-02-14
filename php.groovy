@@ -120,7 +120,7 @@ timestamps {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
                                 sh "docker rm ${env.PROJECT_NAME} -f"
-                                sh "docker run -d --name ${env.PROJECT_NAME} -p 8080:8080 ${env.PROJECT_NAME}:${OLD_TAG}"
+                                sh "docker run -d --name ${env.PROJECT_NAME} -p 8080:8080 yagza/${env.PROJECT_NAME}:${OLD_TAG}"
                             } catch (Exception e) {
                                 echo "Failed to rollback: ${e}"
                                 error "Failed to rollback"
