@@ -68,7 +68,7 @@ timestamps {
                             echo "Current running container tag: ${OLD_TAG}"
                         } catch (Exception e) {
                             echo "No running container found or failed to get old tag: ${e}"
-                            OLD_TAG = 'latest' // Fallback, если контейнер не найден
+                            OLD_TAG = '1.0.1' // Fallback, если контейнер не найден
                         }
                     } else {
                         echo "Skipping 'Get old tag' stage because FIRST_DEPLOY is ${env.FIRST_DEPLOY}"
@@ -126,9 +126,8 @@ timestamps {
                         if (currentBuild.result == 'FAILURE') {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
-                                sh "docker stop ${APP_NAME}"
-                                sh "docker rm ${APP_NAME}"
-                                sh "docker run -d --name ${APP_NAME} -p 8080:8080 ${DOCKER_REGISTRY}/${APP_NAME}:${OLD_TAG}"
+                                sh "docker rm ${env.PROJECT_NAME} -f"
+                                docker.image("${env.PROJECT_NAME}:${OLD_TAG}").withRun("--name ${env.PROJECT_NAME} -p 8080:8080")
                             } catch (Exception e) {
                                 echo "Failed to rollback: ${e}"
                                 error "Failed to rollback"
