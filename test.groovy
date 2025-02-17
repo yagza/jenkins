@@ -17,8 +17,8 @@ timestamps {
                 }
 
                 stage ("Print active choise parameters") {
-                    echo "${ENV_ACTIVE_1}"
-                    // echo "${ENV_ACTIVE_2}"
+                    echo "the zone is the following ${ZONE}"
+                    echo "the food will be ${FOOD}"
                 }
 
             } catch (Exception e) {
