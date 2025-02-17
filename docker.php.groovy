@@ -7,6 +7,8 @@ timestamps {
             env.PROJECT_NAME = "project_pso"
             env.PROJECT_VERSION = "0.0.1"
 
+            try {
+
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
 
@@ -125,15 +127,16 @@ timestamps {
                     } else {
                         echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
-                }
-
-            post {
-                always {
-                    println("Очистка Jenkins Slave Node")
-                    cleanWs()
-                }
-           
+                }                
+            } catch (Exception e) {
+                echo "Pipeline failed: ${e.getMessage()}"
+                currentBuild.result = 'FAILURE'
+                throw e 
+            } finally {
+                println("Очистка Jenkins Slave Node")
+                cleanWs()
             }
+           
         }
     }
 }
