@@ -1,4 +1,4 @@
-def blah {
+def blah() {
     sh """
         echo "${ENV_INSIDE_NODE_1}"
         echo "${ENV_INSIDE_NODE_2}"
