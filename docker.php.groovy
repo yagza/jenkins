@@ -1,4 +1,14 @@
-import groovy.json.JsonSlurper
+/*
+    # The following variables must be set in "Prepare an environment for the run"
+
+    JenkinsSlaveNode 
+    GithubCreds 
+    DockerRegistry 
+    DockerhubCreds 
+    FIRST_DEPLOY 
+*/
+
+// import groovy.json.JsonSlurper
 
 timestamps {
     ansiColor('xterm') {
