@@ -126,6 +126,12 @@ timestamps {
                         echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
                 }
+
+            finally {
+                println("Очистка Jenkins Slave Node")
+                cleanWs()
+            }
+            
             }
         }
     }
