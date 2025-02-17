@@ -7,10 +7,10 @@ timestamps {
         try {
             println("These are external defined envs")
             println(ENV_FROM_PIPE_1)
-            println($env.ENV_FROM_PIPE_2)
+            println(env.ENV_FROM_PIPE_2)
             println("These are inside defined envs")
-            println($ENV_INSIDE_NODE_1)
-            println($ENV_INSIDE_NODE_2)
+            println(ENV_INSIDE_NODE_1)
+            println(ENV_INSIDE_NODE_2)
         } catch (Exception e) {
             echo "Pipeline failed: ${e.getMessage()}"
             currentBuild.result = 'FAILURE'
