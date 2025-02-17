@@ -1,18 +1,25 @@
+def blah {
+    sh """
+        echo "${ENV_INSIDE_NODE_1}"
+        echo "${ENV_INSIDE_NODE_2}"
+    """
+}
+
 timestamps {
     node(JenkinsSlaveNode) {
-/*
+
     environment {
         ENV_INSIDE_NODE_1 = 'This is the value of ENV_INSIDE_NODE_1'
         ENV_INSIDE_NODE_2 = env.ENV_FROM_PIPE_2
     }
-*/
-        try {
 
+        try {
+/*
             script {
                 env.ENV_INSIDE_NODE_1 = 'This is the value of ENV_INSIDE_NODE_1'
                 env.ENV_INSIDE_NODE_2 = env.ENV_FROM_PIPE_2
             }
-
+*/
             stage ("Print external defined envs") {
                 println(ENV_FROM_PIPE_1)
                 println(env.ENV_FROM_PIPE_2)
