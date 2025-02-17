@@ -127,10 +127,10 @@ timestamps {
                     }
                 }
 
-            finally {
-                println("Очистка Jenkins Slave Node")
-                cleanWs()
-            }
+                stage('Clean Build') {
+                    println("Очистка Jenkins Slave Node")
+                    cleanWs()
+                }
             
             }
         }
