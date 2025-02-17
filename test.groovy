@@ -12,8 +12,13 @@ timestamps {
                 }
 
                 stage ("Print inside defined envs") {
-                    echo "${ENV_INSIDE_NODE_2}"
                     echo "${ENV_INSIDE_NODE_1}"
+                    echo "${ENV_INSIDE_NODE_2}"
+                }
+
+                stage ("Print active choise parameters") {
+                    echo "${ENV_ACTIVE_1}"
+                    // echo "${ENV_ACTIVE_2}"
                 }
 
             } catch (Exception e) {
