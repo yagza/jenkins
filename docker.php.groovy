@@ -39,7 +39,7 @@ timestamps {
                     def version = readFile "composer.json"
                     echo version
 */
-// with plugin Pipeline Utility Steps
+// Nailed it with the plugin Pipeline Utility Steps
                     def object = readJSON file: "${WORKSPACE}/composer.json"
 
                     assert object instanceof Map
