@@ -1,7 +1,7 @@
 timestamps {
     node(JenkinsSlaveNode) {
     environment {
-        ENV_INSIDE_NODE_1 = "This is the value of ENV_INSIDE_NODE_1"
+        ENV_INSIDE_NODE_1 = 'This is the value of ENV_INSIDE_NODE_1'
         ENV_INSIDE_NODE_2 = env.ENV_FROM_PIPE_2
     }
         try {
