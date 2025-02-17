@@ -6,7 +6,7 @@ timestamps {
     }
         try {
             println("These are external defined envs")
-            println($ENV_FROM_PIPE_1)
+            println(ENV_FROM_PIPE_1)
             println($env.ENV_FROM_PIPE_2)
             println("These are inside defined envs")
             println($ENV_INSIDE_NODE_1)
