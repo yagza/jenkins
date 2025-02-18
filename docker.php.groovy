@@ -140,7 +140,7 @@ timestamps {
 
 
                 stage ('Inso test') {
-                    checkout scmGit(branches: [[name: main]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
+                    checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
                     sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
                 }
 
