@@ -10,6 +10,8 @@
 
 // import groovy.json.JsonSlurper
 
+def SlaveNodes = ['vm-01', 'vm-02'] 
+
 timestamps {
     ansiColor('xterm') {
         node(JenkinsSlaveNode) {
@@ -101,6 +103,28 @@ timestamps {
                     }
                 }
 
+
+                stage('Run New Version on every nodes') {
+                    def parallelTasks = [:]
+
+                    SlaveNodes.each { slave ->
+                        parallelTasks["Run on ${slave}"] = {
+                            node(slave) {
+                                try {
+                                    MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
+                                    echo 'you may try to connect http://10.0.0.146:8080'
+                                } catch (Exception e) {
+                                    echo "Failed to start new container: ${e}"
+                                    currentBuild.result = 'FAILURE'
+                                }
+                            }
+                        }
+                    }
+
+                    parallel parallelTasks
+                }
+
+/*
                 stage('Run New Version') {
                     try {
                         MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
@@ -110,7 +134,7 @@ timestamps {
                         currentBuild.result = 'FAILURE'
                     }
                 }
-
+*/
                 stage('Health check') {
                     if (currentBuild.result != 'FAILURE') {
                         try {
