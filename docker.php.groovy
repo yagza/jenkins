@@ -164,10 +164,10 @@ timestamps {
                 echo "Pipeline failed: ${e.getMessage()}"
                 currentBuild.result = 'FAILURE'
                 throw e 
-            } finally {
+            } /*finally {
                 println("Очистка Jenkins Slave Node")
                 cleanWs()
-            }
+            }*/
            
         }
     }
