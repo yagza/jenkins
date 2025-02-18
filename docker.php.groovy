@@ -138,6 +138,12 @@ timestamps {
                     }
                 }            
 
+
+                stage ('Inso test') {
+                    checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
+                    sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
+                }
+
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
                         if (currentBuild.result == 'FAILURE') {
