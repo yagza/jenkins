@@ -111,6 +111,8 @@ timestamps {
                         parallelTasks["Run on ${slave}"] = {
                             node(slave) {
                                 try {
+                                    sh "docker system prune -a -f"
+                                    sh "docker rm ${PROJECT_NAME} -f"
                                     MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
                                     echo 'you may try to connect https://udemy.my.home'
                                 } catch (Exception e) {
