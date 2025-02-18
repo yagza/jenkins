@@ -54,7 +54,7 @@ timestamps {
                     }
 
                 }
-/*
+
                 stage('Build image') {
                     MyApp = docker.build("yagza/${PROJECT_NAME}:${PROJECT_VERSION}")
                 }
@@ -66,8 +66,23 @@ timestamps {
                 }
 
                 stage ('Clear local registry') {
+                    def parallelTasks = [:]
+
+                    SlaveNodes.each { slave ->
+                        parallelTasks["Run on ${slave}"] = {
+                            node(slave) {
+                                sh "docker system prune -a -f"
+                            }
+                        }
+                    }
+                    parallel parallelTasks
+                }
+
+/*                
+                {
                     sh "docker system prune -a -f"
                 }
+*/
 
                 stage('Get old tag') {
                 // for rollback purpose
@@ -91,7 +106,30 @@ timestamps {
                     }
                 }
 
-                stage('Stop old container') {
+
+                stage('Stop old container on every nodes') {
+                    def parallelTasks = [:]
+
+                    SlaveNodes.each { slave ->
+                        parallelTasks["Run on ${slave}"] = {
+                            node(slave) {
+                                if (env.FIRST_DEPLOY == 'false') {
+                                    try {
+                                        sh "docker rm ${PROJECT_NAME} -f"
+                                    } catch (Exception e) {
+                                        echo "No running container found or failed to stop/remove: ${e}"
+                                    }
+                                } else {
+                                    echo "Skipping 'Stop old Container' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
+                                }
+                            }
+                        }
+                    }
+                    parallel parallelTasks
+                }
+
+/*                
+                {
                     if (env.FIRST_DEPLOY == 'false') {
                         try {
                             sh "docker rm ${PROJECT_NAME} -f"
@@ -102,8 +140,7 @@ timestamps {
                         echo "Skipping 'Stop old Container' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
                 }
-
-
+*/
                 stage('Run New Version on every nodes') {
                     def parallelTasks = [:]
 
@@ -122,7 +159,6 @@ timestamps {
                             }
                         }
                     }
-
                     parallel parallelTasks
                 }
 
@@ -137,13 +173,12 @@ timestamps {
                         }
                     }
                 }            
-*/
 
-                stage ('Inso test') {
+                stage ('Insomnia test') {
                     checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
                     sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
                 }
-/*
+
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
                         if (currentBuild.result == 'FAILURE') {
@@ -159,15 +194,15 @@ timestamps {
                     } else {
                         echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
-                } */
+                } 
             } catch (Exception e) {
                 echo "Pipeline failed: ${e.getMessage()}"
                 currentBuild.result = 'FAILURE'
                 throw e 
-            } /*finally {
+            } finally {
                 println("Очистка Jenkins Slave Node")
                 cleanWs()
-            }*/
+            }
            
         }
     }
