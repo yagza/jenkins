@@ -127,7 +127,8 @@ timestamps {
                 stage('Health check') {
                     if (currentBuild.result != 'FAILURE') {
                         try {
-                            sh "curl --fail http://localhost:8080"
+                            // sh "curl --fail http://localhost:8080"
+                            sh "curl --fail https://udemy.my.home"
                         } catch (Exception e) {
                             echo "Health check failed: ${e}"
                             currentBuild.result = 'FAILURE'
