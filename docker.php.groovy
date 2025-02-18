@@ -54,7 +54,7 @@ timestamps {
                     }
 
                 }
-
+/*
                 stage('Build image') {
                     MyApp = docker.build("yagza/${PROJECT_NAME}:${PROJECT_VERSION}")
                 }
@@ -137,13 +137,13 @@ timestamps {
                         }
                     }
                 }            
-
+*/
 
                 stage ('Inso test') {
                     checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
                     sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
                 }
-
+/*
                 stage('Rollback if failed') {
                     if (env.FIRST_DEPLOY == 'false') {
                         if (currentBuild.result == 'FAILURE') {
@@ -159,7 +159,7 @@ timestamps {
                     } else {
                         echo "Skipping 'Rollback' stage because FIRST_DEPLOY is ${FIRST_DEPLOY}"
                     }
-                }                
+                } */
             } catch (Exception e) {
                 echo "Pipeline failed: ${e.getMessage()}"
                 currentBuild.result = 'FAILURE'
