@@ -112,7 +112,7 @@ timestamps {
                             node(slave) {
                                 try {
                                     MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
-                                    echo 'you may try to connect http://10.0.0.146:8080'
+                                    echo 'you may try to connect https://udemy.my.home'
                                 } catch (Exception e) {
                                     echo "Failed to start new container: ${e}"
                                     currentBuild.result = 'FAILURE'
@@ -124,17 +124,6 @@ timestamps {
                     parallel parallelTasks
                 }
 
-/*
-                stage('Run New Version') {
-                    try {
-                        MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
-                        echo 'you may try to connect http://10.0.0.146:8080'
-                    } catch (Exception e) {
-                        echo "Failed to start new container: ${e}"
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-*/
                 stage('Health check') {
                     if (currentBuild.result != 'FAILURE') {
                         try {
