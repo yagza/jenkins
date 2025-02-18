@@ -111,8 +111,8 @@ timestamps {
                         parallelTasks["Run on ${slave}"] = {
                             node(slave) {
                                 try {
-                                    sh "docker system prune -a -f"
                                     sh "docker rm ${PROJECT_NAME} -f"
+                                    sh "docker system prune -a -f"
                                     MyApp.run("--name ${PROJECT_NAME} -p 8080:8080")
                                     echo 'you may try to connect https://udemy.my.home'
                                 } catch (Exception e) {
@@ -140,7 +140,7 @@ timestamps {
 
 
                 stage ('Inso test') {
-                    checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
+                    checkout scmGit(branches: [[name: main]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: TestGitUrlSource]])
                     sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
                 }
 
