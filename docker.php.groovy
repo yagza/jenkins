@@ -42,15 +42,17 @@ timestamps {
                     echo version
 */
 // Nailed it with the plugin Pipeline Utility Steps
-                    def object = readJSON file: "${WORKSPACE}/composer.json"
 
+                    def object = readJSON file: "${WORKSPACE}/${ComposerFile}}"
                     assert object instanceof Map
-                    if (object.name != null ) {
+                    if (object.name != null && object.version != null ) {
                         env.PROJECT_NAME = object.name.replaceAll("/","_")
-                    }
-
-                    if (object.version != null ) {
                         env.PROJECT_VERSION = object.version
+                        echo "PROJECT_NAME is ${PROJECT_NAME}"
+                        echo "PROJECT_VERSION is ${PROJECT_VERSION}"
+                    } else {
+                        echo "failed to obtain PROJECT_NAME or PROJECT_VERSION from composer file ${ComposerFile}"
+                        currentBuild.result = 'FAILURE'
                     }
 
                 }
@@ -65,7 +67,7 @@ timestamps {
                     }
                 }
 
-                stage ('Clear local registry') {
+                stage ('Clear local registry on every node') {
                     def parallelTasks = [:]
 
                     SlaveNodes.each { slave ->
@@ -179,9 +181,10 @@ timestamps {
                     sh "inso run collection -w ${InsoCfg} ${InsoJob} --disableCertValidation"
                 }
 
-                stage('Rollback if failed') {
-                    if (env.FIRST_DEPLOY == 'false') {
-                        if (currentBuild.result == 'FAILURE') {
+
+                if (env.FIRST_DEPLOY == 'false') {
+                    if (currentBuild.result == 'FAILURE') {
+                    stage('Rollback if failed') {
                             echo "Rolling back to previous version: ${OLD_TAG}"
                             try {
                                 sh "docker rm ${PROJECT_NAME} -f"
