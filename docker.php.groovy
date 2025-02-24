@@ -43,7 +43,7 @@ timestamps {
 */
 // Nailed it with the plugin Pipeline Utility Steps
 
-                    def object = readJSON file: "${WORKSPACE}/${ComposerFile}}"
+                    def object = readJSON file: "${WORKSPACE}/${ComposerFile}"
                     assert object instanceof Map
                     if (object.name != null && object.version != null ) {
                         env.PROJECT_NAME = object.name.replaceAll("/","_")
