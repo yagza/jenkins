@@ -21,6 +21,10 @@ timestamps {
                     echo "the food will be ${FOOD}"
                 }
 
+                stage ("Chto tam po tely") {
+                    echo "${ZONE} with the ${BODY}"
+                }
+
             } catch (Exception e) {
                 echo "Pipeline failed: ${e.getMessage()}"
                 currentBuild.result = 'FAILURE'
