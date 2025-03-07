@@ -7,7 +7,7 @@ timestamps {
 
         try {
             stage ("trivy scan") {
-                sh "trivy image --format template --template \"@/usr/local/bin/contrib/html.tpl\" -o ${trivyReport} ${imageName}"
+                sh "trivy image --format template --template \"@contrib/html.tpl\" -o ${trivyReport} ${imageName}"
             }
 
             stage('Archive Report') {
