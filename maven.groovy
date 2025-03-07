@@ -1,8 +1,8 @@
 timestamps {
     node(JenkinsSlaveNode) {
 
-        MAVEN_VERSION = "${MAVEN_VERSION}"
-        JDK_VERSION = "${JDK_VERSION}"
+        def MAVEN_VERSION = "${env.MAVEN_VERSION}"
+        def JDK_VERSION = "${env.JDK_VERSION}"
 
             try {
 
