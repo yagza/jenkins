@@ -3,7 +3,7 @@ timestamps {
 
         def imageName = "yagza/shadowsocks_v2ray"
         //def trivyReport = "${env.imageName}.replaceAll('/','_')"
-        def trivyReport = "${env.imageName}.html"
+        def trivyReport = "shadowsocks_v2ray.html"
 
         try {
             stage ("trivy scan") {
