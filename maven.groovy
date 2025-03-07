@@ -17,10 +17,12 @@ timestamps {
                     }
                 }
                 stage('Test') {
+                    withMaven(maven: "${MAVEN_VERSION}", jdk: "${JDK_VERSION}") {
                         sh 'mvn test'
-                    post {
-                        always {
-                            junit 'target/surefire-reports/*.xml'
+                        post {
+                            always {
+                                junit 'target/surefire-reports/*.xml'
+                            }
                         }
                     }
                 }
