@@ -13,13 +13,11 @@ timestamps {
                 stage('Build') {
                     tool name: '3.8.8', type: 'maven'
                     withMaven(maven: "${MAVEN_VERSION}", jdk: "${JDK_VERSION}") {
-                            //sh 'mvn -B -DskipTests clean package'
                             sh 'mvn -B -DskipTests clean package'
                     }
                 }
                 stage('Test') {
-                        //sh 'mvn test'
-                        sh 'mvn -B -DskipTests clean package'
+                        sh 'mvn test'
                     post {
                         always {
                             junit 'target/surefire-reports/*.xml'
