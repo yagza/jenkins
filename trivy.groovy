@@ -23,9 +23,9 @@ timestamps {
             currentBuild.result = 'FAILURE'
             throw e 
 
-        } finally {
+        } /*finally {
             println("Очистка Jenkins Slave Node")
             cleanWs()
-        }
+        }*/
     }
 }
