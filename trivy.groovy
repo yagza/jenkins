@@ -1,12 +1,9 @@
 timestamps {
     node(JenkinsSlaveNode) {
 
-        //def imageName = "yagza/shadowsocks_v2ray"
-        //def trivyReport = "shadowsocks_v2ray.html"
-
         try {
             stage ("trivy scan") {
-                sh "trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\" -o ${trivyReport} ${imageName}"
+                sh "trivy image ${trivyOptions} -o ${trivyReport} ${imageName}"
             }
 
             stage('Archive Report') {
