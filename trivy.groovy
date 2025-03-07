@@ -2,7 +2,8 @@ timestamps {
     node(JenkinsSlaveNode) {
 
         def imageName = "yagza/shadowsocks_v2ray"
-        def trivyReport = "${env.imageName}.replaceAll('/','_')"
+        //def trivyReport = "${env.imageName}.replaceAll('/','_')"
+        def trivyReport = "${env.imageName}.html"
 
         try {
             stage ("trivy scan") {
