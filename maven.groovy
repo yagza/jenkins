@@ -8,6 +8,7 @@ timestamps {
 
                 stage ('Git Checkout') {
                     checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlSource]])
+                }
 
                 stage('Build') {
                     withMaven(maven: "${MAVEN_VERSION}", jdk: "${JDK_VERSION}") {
