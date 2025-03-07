@@ -7,7 +7,7 @@ timestamps {
 
         try {
             stage ("trivy scan") {
-                sh "trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\" -o report.html ${imageName}"
+                sh "trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\" -o ${trivyReport} ${imageName}"
             }
 
             stage('Archive Report') {
@@ -23,9 +23,9 @@ timestamps {
             currentBuild.result = 'FAILURE'
             throw e 
 
-        } /*finally {
+        } finally {
             println("Очистка Jenkins Slave Node")
             cleanWs()
-        }*/
+        }
     }
 }
