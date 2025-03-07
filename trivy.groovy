@@ -3,6 +3,7 @@ timestamps {
 
         try {
             stage ("trivy scan") {
+                echo "trivy image ${trivyOptions} -o ${trivyReport} ${imageName}"
                 sh "trivy image ${trivyOptions} -o ${trivyReport} ${imageName}"
             }
 
