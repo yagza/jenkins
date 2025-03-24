@@ -3,8 +3,8 @@ timestamps {
 
         try {
             stage ("trivy scan") {
-                echo "trivy image ${trivyOptions} -o ${trivyReport} ${imageName}"
-                sh "trivy image ${trivyOptions} -o ${trivyReport} ${imageName}"
+                echo "trivy image ${trivyLocalDB} ${trivyOptions} -o ${trivyReport} ${imageName}"
+                sh "trivy image ${trivyLocalDB} ${trivyOptions} -o ${trivyReport} ${imageName}"
             }
 
             stage('Archive Report') {
