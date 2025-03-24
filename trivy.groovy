@@ -26,3 +26,5 @@ timestamps {
         }
     }
 }
+
+// trivy image --cache-dir . --download-db-only // to get the cache
