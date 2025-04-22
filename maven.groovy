@@ -73,14 +73,14 @@ timestamps {
                             \\""
                         '''
 
-                        sh 'sleep 600'
+                        sh '''
+                            podman exec ${postgresContainer} bash -c \
+                            "PGPASSWORD=\${PG_PASS} psql -U postgres -d \${USER_DB} -c \\"
+                                GRANT ALL ON SCHEMA public TO \${USER_DB};
+                            \\""
+                        '''
 
-                        //sh '''
-                        //    podman exec ${postgresContainer} bash -c \
-                        //    "PGPASSWORD=\${PG_PASS} psql -U postgres -d \${USER_DB} -c \\"
-                        //        GRANT ALL ON SCHEMA public TO \${DB_USER};
-                        //    \\""
-                        //'''
+                        sh 'sleep 600'
                     }
                 }
 
@@ -110,7 +110,7 @@ timestamps {
                 throw e 
             } finally {
                 println("Очистка Jenkins Slave Node")
-                //cleanWs()
+                cleanWs()
             }
         }
     }
