@@ -82,7 +82,7 @@ timestamps {
                 }
 
                 stage('Build') {
-                    tool name: '3.6.4', type: 'maven'
+                    tool name: '3.6.3', type: 'maven'
                     withMaven(maven: "${MAVEN_VERSION}", jdk: "${JDK_VERSION}") {
                             sh 'mvn -B -DskipTests clean package'
                     }
