@@ -28,8 +28,8 @@ timestamps {
                             postgres:16-alpine
                         """
                     }
-                    def maxRetries = 4
-                    def waitTime = 30
+                    def maxRetries = 12
+                    def waitTime = 10
                     def retryCount = 0
                     def isReady = false
                 
