@@ -108,7 +108,7 @@ timestamps {
                 throw e 
             } finally {
                 println("Очистка Jenkins Slave Node")
-                cleanWs()
+                //cleanWs()
             }
         }
     }
