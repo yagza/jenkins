@@ -33,25 +33,28 @@ timestamps {
                     def retryCount = 0
                     def isReady = false
                 
+
                     while (retryCount < maxRetries && !isReady) {
                         retryCount++
                         echo "Попытка проверки готовности PostgreSQL (#${retryCount})"
-                    
-                        isReady = sh(
-                            script: "podman exec ${postgresContainer} pg_isready -U postgres && echo 'READY' || echo 'NOT_READY'",
-                            returnStdout: true
-                        ).trim() == 'READY'
-                    
-                        if (!isReady && retryCount < maxRetries) {
-                            sleep(waitTime)
+                        
+                        def pgIsReady = sh(
+                            script: "podman exec ${postgresContainer} pg_isready -U postgres",
+                            returnStatus: true
+                        ) == 0
+                        
+                        if (pgIsReady) {
+                            isReady = true
+                            echo "PostgreSQL готов к подключениям"
+                        } else {
+                            if (retryCount < maxRetries) {
+                                sleep(waitTime)
+                            } else {
+                                error "PostgreSQL не готов после ${maxRetries} попыток проверки"
+                            }
                         }
                     }
-                
-                    if (!isReady) {
-                        error "PostgreSQL не готов после ${maxRetries} попыток проверки"
-                    }
-                
-                    echo "PostgreSQL готов к подключениям"
+
 
                     withCredentials([string(credentialsId: 'postgresUserDb', variable: 'USER_DB'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
                         sh """
