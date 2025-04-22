@@ -3,7 +3,7 @@ timestamps {
 
         def MAVEN_VERSION = "${env.MAVEN_VERSION}"
         def JDK_VERSION = "${env.JDK_VERSION}"
-        def postgresContainer=pgcontainer
+        def postgresContainer="pgcontainer"
 
             try {
 
