@@ -53,18 +53,23 @@ timestamps {
                 
                     echo "PostgreSQL готов к подключениям"
 
-                    withCredentials([usernamePassword(credentialsId: postgresUserCredsId, usernameVariable: 'DB_USER', passwordVariable: 'DB_PASSWORD'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
+                    withCredentials([string(credentialsId: 'postgresUserDb', variable: 'USER_DB'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
+                        // Создаем пользователя и БД с явным указанием пароля админа
                         sh """
-                            podman exec ${postgresContainer} psql -U \$PG_ADMIN_USER -c "
-                            CREATE USER \${DB_USER} WITH PASSWORD '\${DB_PASSWORD}';
-                            CREATE DATABASE ${dbName} OWNER \${DB_USER};
-                            GRANT ALL PRIVILEGES ON DATABASE ${dbName} TO \${DB_USER};
-                            "
+                            podman exec ${postgresContainer} bash -c \
+                            "PGPASSWORD=\${PG_PASS} psql -U postgres -c \\"
+                                CREATE USER \${USER_DB} WITH PASSWORD '\${USER_DB}';
+                                CREATE DATABASE ${USER_DB} OWNER \${USER_DB};
+                                GRANT ALL PRIVILEGES ON DATABASE ${USER_DB} TO \${USER_DB};
+                            \\""
                         """
+
+                        // Даем права на схему public
                         sh """
-                            podman exec ${postgresContainer} psql -U \$PG_ADMIN_USER -d ${dbName} -c "
-                            GRANT ALL ON SCHEMA public TO \${DB_USER};
-                            "
+                            podman exec ${postgresContainer} bash -c \
+                            "PGPASSWORD=\${PG_PASS} psql -U postgres -d ${USER_DB} -c \\"
+                                GRANT ALL ON SCHEMA public TO \${USER_DB};
+                            \\""
                         """
                     }
                 }
