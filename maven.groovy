@@ -28,8 +28,8 @@ timestamps {
                             postgres:16-alpine
                         """
                     }
-                    def maxRetries = 4  // Максимальное количество попыток проверки готовности
-                    def waitTime = 30   // Время ожидания между попытками в секундах
+                    def maxRetries = 4
+                    def waitTime = 30
                     def retryCount = 0
                     def isReady = false
                 
@@ -54,7 +54,6 @@ timestamps {
                     echo "PostgreSQL готов к подключениям"
 
                     withCredentials([string(credentialsId: 'postgresUserDb', variable: 'USER_DB'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
-                        // Создаем пользователя и БД с явным указанием пароля админа
                         sh """
                             podman exec ${postgresContainer} bash -c \
                             "PGPASSWORD=\${PG_PASS} psql -U postgres -c \\"
@@ -64,7 +63,6 @@ timestamps {
                             \\""
                         """
 
-                        // Даем права на схему public
                         sh """
                             podman exec ${postgresContainer} bash -c \
                             "PGPASSWORD=\${PG_PASS} psql -U postgres -d ${USER_DB} -c \\"
