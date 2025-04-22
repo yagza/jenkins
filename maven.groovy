@@ -73,6 +73,8 @@ timestamps {
                             \\""
                         '''
 
+                        sh 'sleep 600'
+
                         //sh '''
                         //    podman exec ${postgresContainer} bash -c \
                         //    "PGPASSWORD=\${PG_PASS} psql -U postgres -d \${USER_DB} -c \\"
