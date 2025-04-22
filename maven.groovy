@@ -12,7 +12,7 @@ timestamps {
                 }
 
                 stage ('podman db') {
-                    withCredentials([usernamePassword(credentialsId: 'registry-creds', usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
                         sh """
                             podman login -u \$REGISTRY_USER -p \$REGISTRY_PASSWORD docker.io
                         """
