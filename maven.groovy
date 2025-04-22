@@ -73,12 +73,12 @@ timestamps {
                             \\""
                         '''
 
-                        sh '''
-                            podman exec ${postgresContainer} bash -c \
-                            "PGPASSWORD=\${PG_PASS} psql -U postgres -d \${USER_DB} -c \\"
-                                GRANT ALL ON SCHEMA public TO \${DB_USER};
-                            \\""
-                        '''
+                        //sh '''
+                        //    podman exec ${postgresContainer} bash -c \
+                        //    "PGPASSWORD=\${PG_PASS} psql -U postgres -d \${USER_DB} -c \\"
+                        //        GRANT ALL ON SCHEMA public TO \${DB_USER};
+                        //    \\""
+                        //'''
                     }
                 }
 
