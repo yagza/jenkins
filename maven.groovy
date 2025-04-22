@@ -57,21 +57,21 @@ timestamps {
 
 
                     withCredentials([string(credentialsId: 'postgresUserDb', variable: 'USER_DB'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
-                        sh """
+                        sh '''
                             podman exec ${postgresContainer} bash -c \
                             "PGPASSWORD=\${PG_PASS} psql -U postgres -c \\"
                                 CREATE USER \${USER_DB} WITH PASSWORD '\${USER_DB}';
                                 CREATE DATABASE ${USER_DB} OWNER \${USER_DB};
                                 GRANT ALL PRIVILEGES ON DATABASE ${USER_DB} TO \${USER_DB};
                             \\""
-                        """
+                        '''
 
-                        sh """
+                        sh '''
                             podman exec ${postgresContainer} bash -c \
                             "PGPASSWORD=\${PG_PASS} psql -U postgres -d ${USER_DB} -c \\"
                                 GRANT ALL ON SCHEMA public TO \${USER_DB};
                             \\""
-                        """
+                        '''
                     }
                 }
 
