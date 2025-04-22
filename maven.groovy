@@ -108,6 +108,7 @@ timestamps {
             } finally {
                 println("Очистка Jenkins Slave Node")
                 cleanWs()
+                sh "podman rm -f ${postgresContainer}"
             }
         }
     }
