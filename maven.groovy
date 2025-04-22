@@ -38,7 +38,7 @@ timestamps {
                         echo "Попытка проверки готовности PostgreSQL (#${retryCount})"
                     
                         isReady = sh(
-                            script: "podman exec ${postgresContainer} pg_isready && echo 'READY' || echo 'NOT_READY'",
+                            script: "podman exec ${postgresContainer} pg_isready -U postgres && echo 'READY' || echo 'NOT_READY'",
                             returnStdout: true
                         ).trim() == 'READY'
                     
