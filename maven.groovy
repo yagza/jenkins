@@ -58,7 +58,7 @@ timestamps {
 
                     withCredentials([string(credentialsId: 'postgresUserDb', variable: 'USER_DB'),string(credentialsId: 'postgresAdminPass', variable: 'PG_PASS')]) {
 
-                        env.USER_DB=USER_DB
+                        //env.USER_DB=USER_DB
                         sh '''
                             podman exec ${postgresContainer} bash -c \
                             "PGPASSWORD=\${PG_PASS} psql -U postgres -c \\"
@@ -80,7 +80,7 @@ timestamps {
                             \\""
                         '''
 
-                        sh 'sleep 600'
+                        sh 'sleep 120'
                     }
                 }
 
