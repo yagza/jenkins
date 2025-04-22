@@ -14,7 +14,7 @@ timestamps {
                 stage ('podman db') {
                     withCredentials([usernamePassword(credentialsId: 'registry-creds', usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
                         sh """
-                            podman login -u \$REGISTRY_USER -p \$REGISTRY_PASSWORD
+                            podman login -u \$REGISTRY_USER -p \$REGISTRY_PASSWORD docker.io
                         """
                     }
                     sh "podman rm -f ${postgresContainer} || true"
