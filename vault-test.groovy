@@ -4,7 +4,7 @@ timestamps {
     try {
       stage ("vault secret print") {
         def secrets = [
-          [path: '/v1/team/btccpl/data/some_secret', engineVersion: 2, secretValues: [
+          [path: 'team/btccpl/some_secret', engineVersion: 2, secretValues: [
             [envVar: 'SECRET_1', vaultKey: 'some_name'],
             [envVar: 'SECRET_2', vaultKey: 'team_name']]
           ]
