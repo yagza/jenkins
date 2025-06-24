@@ -10,7 +10,7 @@ timestamps {
           ]
         ]
 
-        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'token-btcpl-read-vault', engineVersion: 2]
+        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'token-btcpl-read-pso', engineVersion: 2]
     
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
