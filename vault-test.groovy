@@ -20,15 +20,15 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
+          sh 'echo $githubcreads'
         }
       }
     
-      stage ('Git Checkout using secret from vault') {
+      /*stage ('Git Checkout using secret from vault') {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
             sh '''
             mkdir -p ~/.ssh
             echo "$githubcreads" > ~/.ssh/id_rsa
-            cat ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             chmod 600 ~/.ssh/known_hosts
@@ -36,7 +36,7 @@ timestamps {
             ls -la simple-php-website
             '''
         }
-      }
+      }*/
     }
 
     catch (Exception e) {
