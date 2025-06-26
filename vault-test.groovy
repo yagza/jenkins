@@ -6,7 +6,8 @@ timestamps {
         def secrets = [
           [path: 'team/btccpl', engineVersion: 2, secretValues: [
             [envVar: 'SECRET_1', vaultKey: 'some_name'],
-            [envVar: 'SECRET_2', vaultKey: 'team_name']]
+            [envVar: 'SECRET_2', vaultKey: 'team_name'],
+            [envVar: 'SECRET_3', vaultKey: 'ssh_name']]
           ],
           [path: 'secret/ssh-key', engineVersion: 2, secretValues: [
             [envVar: 'githubcreads', vaultKey: 'github']]
@@ -20,7 +21,7 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
-          sh 'echo $githubcreads'
+          sh 'echo $SECRET_3'
         }
       }
     
