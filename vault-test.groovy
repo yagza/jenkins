@@ -20,22 +20,20 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
-          sh 'githubcreads'
+          sh 'echo $githubcreads'
         }
       }
     
       stage ('Git Checkout using secret from vault') {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
-          withEnv(["GIT_SSH_KEY=${githubcreads}"]) {
             sh '''
             mkdir -p ~/.ssh
-            echo "$GIT_SSH_KEY" > ~/.ssh/id_rsa
+            echo "$githubcreads" > ~/.ssh/id_rsa
             cat ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             git clone git@github.com:yagza/simple-php-website.git
             ls -la simple-php-website
             '''
-          }
         }
       }
     }
