@@ -2,19 +2,20 @@ timestamps {
   node(JenkinsSlaveNode) {
 
     try {
-   
-      
-      stage ("vault secret print") {
+
         def secrets = [
           [path: 'team/btccpl', engineVersion: 2, secretValues: [
             [envVar: 'SECRET_1', vaultKey: 'some_name'],
-            [envVar: 'SECRET_2', vaultKey: 'team_name']],
+            [envVar: 'SECRET_2', vaultKey: 'team_name']]
+          ],
           [path: 'secret/ssh-key', engineVersion: 2, secretValues: [
             [envVar: 'github-creads', vaultKey: 'github']]
           ]
         ]
 
-        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'btccpl-read-vault', engineVersion: 2]
+        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'btccpl-read-vault', engineVersion: 2]      
+      
+      stage ("vault secret print") {
           
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
