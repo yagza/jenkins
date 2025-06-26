@@ -19,6 +19,10 @@ timestamps {
           sh 'echo $SECRET_2'
         }
       }
+    
+      stage ('Git Checkout using secret from vault') {
+        checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: github-creads, url: GitUrlSource]])
+      }
     }
 
     catch (Exception e) {
