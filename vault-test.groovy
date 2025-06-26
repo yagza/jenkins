@@ -9,7 +9,7 @@ timestamps {
             [envVar: 'SECRET_2', vaultKey: 'team_name']]
           ],
           [path: 'secret/ssh-key', engineVersion: 2, secretValues: [
-            [envVar: 'github-creads', vaultKey: 'github']]
+            [envVar: 'githubcreads', vaultKey: 'github']]
           ]
         ]
 
@@ -20,12 +20,13 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
+          sh 'githubcreads'
         }
       }
     
       stage ('Git Checkout using secret from vault') {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
-          withEnv(["GIT_SSH_KEY=${github-creads}"]) {
+          withEnv(["GIT_SSH_KEY=${githubcreads}"]) {
             sh '''
             mkdir -p ~/.ssh
             echo "$GIT_SSH_KEY" > ~/.ssh/id_rsa
