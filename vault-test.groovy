@@ -2,7 +2,7 @@ timestamps {
   node(JenkinsSlaveNode) {
 
     try {
-      stage ("vault secret print") {
+
         def secrets = [
           [path: 'team/btccpl', engineVersion: 2, secretValues: [
             [envVar: 'SECRET_1', vaultKey: 'some_name'],
@@ -12,7 +12,9 @@ timestamps {
           ]
         ]
 
-        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'btccpl-read-vault', engineVersion: 2]
+        def vault_configuration = [vaultUrl: 'http://10.0.0.150:8200', vaultCredentialId: 'btccpl-read-vault', engineVersion: 2]      
+      
+      stage ("vault secret print") {
     
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
@@ -21,7 +23,18 @@ timestamps {
       }
     
       stage ('Git Checkout using secret from vault') {
-        checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: github-creads, url: GitUrlSource]])
+        withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
+          withEnv(["GIT_SSH_KEY=${github-creads}"]) {
+            sh '''
+            mkdir -p ~/.ssh
+            echo "$GIT_SSH_KEY" > ~/.ssh/id_rsa
+            cat ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            git clone git@github.com:yagza/simple-php-website.git
+            ls -la simple-php-website
+            '''
+          }
+        }
       }
     }
 
