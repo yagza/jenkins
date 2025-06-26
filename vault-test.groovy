@@ -20,7 +20,6 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
-          sh 'echo $githubcreads'
         }
       }
     
@@ -31,6 +30,8 @@ timestamps {
             echo "$githubcreads" > ~/.ssh/id_rsa
             cat ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            chmod 600 ~/.ssh/known_hosts
             git clone git@github.com:yagza/simple-php-website.git
             ls -la simple-php-website
             '''
