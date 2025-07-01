@@ -31,10 +31,6 @@ timestamps {
             sh '''
             mkdir -p ~/.ssh
             cat id_rsa
-            set +x
-            echo "$githubcreads" > id_rsa
-            set -x
-            cat id_rsa
             mv id_rsa ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
