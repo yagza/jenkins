@@ -21,7 +21,6 @@ timestamps {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
           sh 'echo $SECRET_1'
           sh 'echo $SECRET_2'
-          sh 'echo $SECRET_3'
         }
       }
     
@@ -30,7 +29,6 @@ timestamps {
           writeFile(file: 'id_rsa', text: githubcreads)
             sh '''
             mkdir -p ~/.ssh
-            cat id_rsa
             mv id_rsa ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
