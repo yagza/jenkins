@@ -31,7 +31,7 @@ timestamps {
             sh '''
             mkdir -p ~/.ssh
             set +x
-            echo "$githubcreads" > ~/.ssh/id_rsa
+            echo "$githubcreads" > id_rsa
             set -x
             mv id_rsa ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
