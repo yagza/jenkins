@@ -19,12 +19,9 @@ timestamps {
             // Шаг 3: Деплой на виртуальную машину (копирование)
             stage('Deploy') {
                 def remoteServer = 'jenkins@10.0.0.125:/deploy_simple-java-1/'
-                def sshCommand = "scp -r ${env.WORKSPACE} ${remoteServer}"
+                def sshCommand = "scp -i .ssh/id_rsa_deploy -r ${env.WORKSPACE} ${remoteServer}"
         
-                // Используем ssh-agent для аутентификации (если нужно)
-                sshagent(['jenkins_deploy']) {  // Укажите ID ваших SSH-ключей в Jenkins
-                    sh sshCommand
-                }
+                sh "${sshCommand}"
         
                 echo "Deployed to VM successfully!"
             }
