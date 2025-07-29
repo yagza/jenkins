@@ -17,7 +17,7 @@ timestamps {
                 def remoteServer = 'jenkins@10.0.0.125:~'
                 def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.java ${remoteServer}"
                 sh "${sshCommand}"
-                def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.properties ${remoteServer}"
+                sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.properties ${remoteServer}"
                 sh "${sshCommand}"
                 echo "Deployed to VM successfully!"
             }
