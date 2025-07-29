@@ -18,9 +18,10 @@ timestamps {
                         targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties",
                         variable: 'JAVA_PROPS'
                     )
-                ])[0]
-        
-                echo "Config file loaded at ${configFile.path}"
+                ]) {
+                    // В этом блоке можно выполнять дополнительные действия, если нужно
+                    echo "Config file loaded at ${configFile.path}"
+                }
             }
 
             // Шаг 3: Деплой на виртуальную машину (копирование)
