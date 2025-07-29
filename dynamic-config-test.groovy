@@ -8,23 +8,21 @@ timestamps {
             }
 
             stage('Prepare Config') {
-                // Указываем ID конфига, заданный в Jenkins Config File Provider
-                // def configFileId = 'java-properties-config-id'  // Замените на реальный ID вашего конфига
-
                 configFileProvider([configFile(fileId: "${configFileId}", targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties")]) {
                     echo "Config file applied successfully!"
                 }
             }
 
-            // Шаг 3: Деплой на виртуальную машину (копирование)
             stage('Deploy') {
-                def remoteServer = 'jenkins@10.0.0.125:~'
+                def remoteServer = 'jenkins@10.0.0.125:~/deploy_simple-java-1/'
                 def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy -r ${env.WORKSPACE} ${remoteServer}"
-        
                 sh "${sshCommand}"
-        
                 echo "Deployed to VM successfully!"
             }
+
+            stage('Run app') {
+                sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.125 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
+            }            
 
         } catch (Exception e) {
           echo "Pipeline failed: ${e.getMessage()}"
