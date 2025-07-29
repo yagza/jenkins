@@ -1,8 +1,6 @@
 timestamps {
     node(JenkinsSlaveNode) {
 
-        HOSTS_TO_RESOLVE="${env.HOSTS_TO_RESOLVE}"
-
         try {
 
             stage ('Git Checkout') {
