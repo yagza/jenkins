@@ -10,7 +10,11 @@ timestamps {
             }
 
             stage('Prepare Config') {
-                configFileProvider([configFile(fileId: "${configFileId}", targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties")]) {
+                configFileProvider([configFile(fileId: "${configFileId}", targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties.template")]) {
+                    sh """
+                        export HOSTS_TO_RESOLVE="${HOSTS_TO_RESOLVE}"
+                        envsubst < ${env.WORKSPACE}/DnsLookupApp.properties.template > ${env.WORKSPACE}/DnsLookupApp.properties
+                    """
                     echo "Config file applied successfully!"
                 }
             }
