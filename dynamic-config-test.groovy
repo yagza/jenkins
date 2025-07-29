@@ -14,7 +14,7 @@ timestamps {
             }
 
             stage('Deploy') {
-                def remoteServer = 'jenkins@10.0.0.125:~'
+                def remoteServer = 'jenkins@10.0.0.125:~/dynamic-config-test'
                 def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.java ${remoteServer}"
                 sh "${sshCommand}"
                 sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.properties ${remoteServer}"
