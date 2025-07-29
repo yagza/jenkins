@@ -18,7 +18,7 @@ timestamps {
 
             // Шаг 3: Деплой на виртуальную машину (копирование)
             stage('Deploy') {
-                def remoteServer = 'jenkins@10.0.0.125:~/deploy_simple-java-1/'
+                def remoteServer = 'jenkins@10.0.0.125:~'
                 def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy -r ${env.WORKSPACE} ${remoteServer}"
         
                 sh "${sshCommand}"
