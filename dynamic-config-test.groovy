@@ -10,17 +10,9 @@ timestamps {
             stage('Prepare Config') {
                 // Указываем ID конфига, заданный в Jenkins Config File Provider
                 // def configFileId = 'java-properties-config-id'  // Замените на реальный ID вашего конфига
-        
-                // Загружаем конфиг в workspace
-                def configFile = configFileProvider([
-                    configFile(
-                        fileId: "${configFileId}",
-                        targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties",
-                        variable: 'JAVA_PROPS'
-                    )
-                ]) {
-                    // В этом блоке можно выполнять дополнительные действия, если нужно
-                    echo "Config file loaded at ${configFile.path}"
+
+                configFileProvider([configFile(fileId: "${configFileId}", targetLocation: "${env.WORKSPACE}/DnsLookupApp.properties")]) {
+                    echo "Config file applied successfully!"
                 }
             }
 
