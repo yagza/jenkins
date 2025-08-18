@@ -19,19 +19,22 @@ timestamps {
                 sh "ls -la && pwd"
             }
 
+            stage('Prepare Config Properties') {
+                checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlProps]])
+                sh "ls -la && pwd"
+                sh "mkdir /tmp/${env.WORKSPACE}"
+                sh "mv $PROJECT_NAME/$SEGMENT/* /tmp/${env.WORKSPACE}"
+            }
+
             stage ('Download ansible Project') {
                 checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlAnsible]])
                 sh "ls -la && pwd"
             }
-
-            stage('Prepare Config Properties') {
-                checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlProps]])
-                sh "ls -la && pwd"
-                sh "cp -a $PROJECT_NAME/$SEGMENT/* ../ans/hosts"
-            }
-
+            
             dir("${env.WORKSPACE}/ans") {
               stage('Upload properties to both deploy servers') {
+                sh "mv /tmp/${env.WORKSPACE}/* hosts"
+                sh "rmdir /tmp/${env.WORKSPACE}"
                 sh "ansible-playbook -i hosts/psi deploy-book-01.yml"
               }
             }
