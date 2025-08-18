@@ -36,48 +36,47 @@ timestamps {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
 
+def credsMap = [:] // Здесь будут храниться все credentials
 
-def credsMap = [:]  // Будет хранить все найденные credentials
-
-// Список всех возможных credentials с их параметрами
+// Определяем все возможные credentials и их параметры
 def possibleCredentials = [
-    'DATABASE_CREDS': [usernameVar: 'db_user', passwordVar: 'db_pass'],
-    'FTP_CREDS': [usernameVar: 'ftp_user', passwordVar: 'ftp_pass'],
-    'API_CREDS': [apiKeyVar: 'api_key']  // Пример для single-значения
+    'DATABASE_CREDS': [type: 'usernamePassword', vars: ['db_user', 'db_pass']],
+    'FTP_CREDS': [type: 'usernamePassword', vars: ['ftp_user', 'ftp_pass']],
+    'API_KEY': [type: 'string', vars: ['api_key']]
 ]
 
-possibleCredentials.each { credId, vars ->
-    try {
-        if (vars.passwordVar) {  // Для username/password
-            withCredentials([usernamePassword(
-                credentialsId: credId,
-                usernameVariable: vars.usernameVar,
-                passwordVariable: vars.passwordVar
-            )]) {
-                credsMap[vars.usernameVar] = env[vars.usernameVar]
-                credsMap[vars.passwordVar] = env[vars.passwordVar]
-                echo "✅ Успешно загружен ${credId}"
+// Функция для безопасной загрузки credentials
+def loadCredentials() {
+    possibleCredentials.each { credId, params ->
+        try {
+            if(params.type == 'usernamePassword') {
+                withCredentials([usernamePassword(
+                    credentialsId: credId,
+                    usernameVariable: params.vars[0],
+                    passwordVariable: params.vars[1]
+                )]) {
+                    credsMap[params.vars[0]] = env[params.vars[0]]
+                    credsMap[params.vars[1]] = env[params.vars[1]]
+                    echo "✅ Успешно загружен ${credId}"
+                }
+            } else if(params.type == 'string') {
+                withCredentials([string(
+                    credentialsId: credId,
+                    variable: params.vars[0]
+                )]) {
+                    credsMap[params.vars[0]] = env[params.vars[0]]
+                    echo "✅ Успешно загружен ${credId}"
+                }
             }
-        } else {  // Для single-значения (например, API key)
-            withCredentials([string(
-                credentialsId: credId,
-                variable: vars.apiKeyVar
-            )]) {
-                credsMap[vars.apiKeyVar] = env[vars.apiKeyVar]
-                echo "✅ Успешно загружен ${credId}"
-            }
+        } catch(Exception e) {
+            echo "⚠️ Credential ${credId} не найден, пропускаем"
         }
-    } catch (Exception e) {
-        echo "⚠️ Credential ${credId} не найден, пропускаем"
     }
 }
-
-// Создаем временный YAML-файл
-def varsFile = "/tmp/ansible_vars_${UUID.randomUUID()}.yml"
-sh "cat ${varsFile}"
-writeYaml file: varsFile, data: credsMap, overwrite: true
                   
-
+                    def varsFile = "ansible_vars_${BUILD_ID}.yml"
+                    writeYaml file: varsFile, data: credsMap
+                  
               sh """
                   ansible-playbook -i hosts/psi -e @${varsFile} deploy-book-01.yml
                   rm -f ${varsFile}  # Важно: удаляем файл сразу после использования
