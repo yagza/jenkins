@@ -1,0 +1,9 @@
+[pesos_psi:children]
+pesos_psi_api
+pesos_psi_search
+
+[pesos_psi_api]
+deploy_01 ansible_host=10.0.0.125 ansible_user=jenkins ansible_ssh_private_key_file=/home/jenkins/.ssh/id_rsa_deploy
+
+[pesos_psi_search]
+deploy_02 ansible_host=10.0.0.126 ansible_user=jenkins ansible_ssh_private_key_file=/home/jenkins/.ssh/id_rsa_deploy

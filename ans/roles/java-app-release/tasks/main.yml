@@ -1,0 +1,6 @@
+---
+# tasks file for java-app-release
+- name: Копирование конфига из шаблона
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/hosts/templates/example.conf.j2"
+    dest: dynamic-config-test/DnsLookupApp.properties

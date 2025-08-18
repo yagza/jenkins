@@ -1,0 +1,13 @@
+- name: Применение роли java-app-release для deploy_01
+  hosts: deploy_01
+  roles:
+    - java-app-release
+  vars_files:  # Подключаем host-specific переменные
+    - "{{ playbook_dir }}/hosts/host_vars/host_01.yaml"
+
+- name: Применение роли java-app-release для deploy_02
+  hosts: deploy_02
+  roles:
+    - java-app-release
+  vars_files:  # Подключаем host-specific переменные
+    - "{{ playbook_dir }}/hosts/host_vars/host_02.yaml"
