@@ -74,6 +74,7 @@ possibleCredentials.each { credId, vars ->
 
 // Создаем временный YAML-файл
 def varsFile = "/tmp/ansible_vars_${UUID.randomUUID()}.yml"
+sh "cat ${varsFile}"
 writeYaml file: varsFile, data: credsMap, overwrite: true
                   
 
