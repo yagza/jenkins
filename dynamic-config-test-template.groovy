@@ -53,7 +53,7 @@ timestamps {
                 sh "rmdir /tmp/${PROJECT_NAME}"
                 
                     // Читаем файл all.yml
-                    def allYml = readYaml file: 'ans/hosts/group_vars/all.yml'
+                    def allYml = readYaml file: 'hosts/group_vars/all.yml'
                     
                     // Получаем список credentials
                     def credsList = allYml.Credentials
