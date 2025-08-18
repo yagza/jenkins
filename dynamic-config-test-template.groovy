@@ -32,7 +32,7 @@ timestamps {
 
             dir("${env.WORKSPACE}/ans") {
               stage('Upload properties to both deploy servers') {
-                ansible-playbook -i hosts/psi deploy-book-01.yml
+                sh "ansible-playbook -i hosts/psi deploy-book-01.yml"
               }
             }
 
