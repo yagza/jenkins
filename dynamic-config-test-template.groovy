@@ -47,48 +47,38 @@ timestamps {
             }*/
 
             dir("${env.WORKSPACE}/ans") {
-            stage('Something strange') {
-
-                sh "mv /tmp/${PROJECT_NAME}/* hosts"
-                sh "rmdir /tmp/${PROJECT_NAME}"
+                stage('Upload appropriate properties to both deploy servers') {
+                    
+                    sh "mv /tmp/${PROJECT_NAME}/* hosts"
+                    sh "rmdir /tmp/${PROJECT_NAME}"
                 
-                    // Читаем файл all.yml
                     def allYml = readYaml file: 'hosts/group_vars/all.yml'
-                    
-                    // Получаем список credentials
                     def credsList = allYml.Credentials
-                    
-                    // Создаем map для хранения переменных
                     def ansibleVars = [:]
-                    
-                    // Обрабатываем каждый credential
+
                     credsList.each { credId ->
-                        // Извлекаем компонент из имени credential (удаляем _CREDS)
                         def component = credId.replace('_CREDS', '')
                         
-                        // Используем withCredentials для получения значений
                         withCredentials([usernamePassword(
                             credentialsId: credId,
                             usernameVariable: 'USERNAME',
                             passwordVariable: 'PASSWORD'
                         )]) {
-                            // Сохраняем значения в map
                             ansibleVars["${component}_USERNAME"] = env.USERNAME
                             ansibleVars["${component}_PASSWORD"] = env.PASSWORD
                         }
                     }
                     
-                    // Записываем переменные в файл
                     writeYaml file: 'ansible_cred_vars.yml', data: ansibleVars
                     
-                    // Для отладки можно вывести содержимое файла
+                    // DELETE. For debug purpose only
                     sh 'cat ansible_cred_vars.yml'
 
                     sh """
                     ansible-playbook -i hosts/psi -e @ansible_cred_vars.yml deploy-book-01.yml
                     rm -f ansible_cred_vars.yml
                     """
-            }
+                }
             }
 
             stage('Run app') {
