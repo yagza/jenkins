@@ -29,12 +29,18 @@ timestamps {
                 checkout scmGit(branches: [[name: GitBranchSource]], extensions: [], userRemoteConfigs: [[credentialsId: GithubCreds, url: GitUrlAnsible]])
                 sh "ls -la && pwd"
             }
-            
+
+           
             dir("${env.WORKSPACE}/ans") {
               stage('Upload properties to both deploy servers') {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
-                sh "ansible-playbook -i hosts/psi deploy-book-01.yml"
+                withCredentials([
+                    usernamePassword(credentialsId: 'DATABASE_CREDS', usernameVariable: 'db_user', passwordVariable: 'db_password'),
+                    usernamePassword(credentialsId: 'FTP_CREDS', usernameVariable: 'ftp_user', passwordVariable: 'ftp_password')
+                ]) {
+                    sh "ansible-playbook -i hosts/psi -e 'DB_USERNAME=$db_user' -e 'DB_PASSWORD=$db_password' deploy-book-01.yml"
+                }
               }
             }
 
