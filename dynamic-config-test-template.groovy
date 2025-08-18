@@ -40,27 +40,34 @@ timestamps {
                 def creds = [:]
           
                 // Проверяем и добавляем credentials только если они существуют
-                if (credentialsExists('DATABASE_CREDS')) {
-                    withCredentials([usernamePassword(
-                      credentialsId: 'DATABASE_CREDS',
-                      usernameVariable: 'DB_USER',
-                      passwordVariable: 'DB_PASS'
-                    )]) {
-                      creds['db_user'] = env.DB_USER
-                      creds['db_pass'] = env.DB_PASS
-                    }
-                }
-          
-              if (credentialsExists('FTP_CREDS')) {
-                withCredentials([usernamePassword(
-                  credentialsId: 'FTP_CREDS',
-                  usernameVariable: 'FTP_USER',
-                  passwordVariable: 'FTP_PASS'
-                )]) {
-                  creds['ftp_user'] = env.FTP_USER
-                  creds['ftp_pass'] = env.FTP_PASS
-                }
-              }
+try {
+  withCredentials([usernamePassword(
+    credentialsId: 'DATABASE_CREDS',
+    usernameVariable: 'DB_USER',
+    passwordVariable: 'DB_PASS'
+  )]) {
+    creds['db_user'] = env.DB_USER
+    creds['db_pass'] = env.DB_PASS
+    echo "Found DATABASE_CREDS credentials"
+  }
+} catch (Exception e) {
+  echo "DATABASE_CREDS not found, skipping"
+}
+
+// Проверяем FTP_CREDS
+try {
+  withCredentials([usernamePassword(
+    credentialsId: 'FTP_CREDS',
+    usernameVariable: 'FTP_USER',
+    passwordVariable: 'FTP_PASS'
+  )]) {
+    creds['ftp_user'] = env.FTP_USER
+    creds['ftp_pass'] = env.FTP_PASS
+    echo "Found FTP_CREDS credentials"
+  }
+} catch (Exception e) {
+  echo "FTP_CREDS not found, skipping"
+}
           
               // Формируем команду с только существующими переменными
               def extraVars = creds.collect { k, v -> "-e '${k}=${v}'" }.join(' ')
