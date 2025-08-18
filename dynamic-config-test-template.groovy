@@ -36,44 +36,50 @@ timestamps {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
 
-                // Создаем Map для хранения credentials
-                def creds = [:]
-          
-                // Проверяем и добавляем credentials только если они существуют
-try {
-  withCredentials([usernamePassword(
-    credentialsId: 'DATABASE_CREDS',
-    usernameVariable: 'DB_USER',
-    passwordVariable: 'DB_PASS'
-  )]) {
-    creds['db_user'] = env.DB_USER
-    creds['db_pass'] = env.DB_PASS
-    echo "Found DATABASE_CREDS credentials"
-  }
-} catch (Exception e) {
-  echo "DATABASE_CREDS not found, skipping"
+
+def credsMap = [:]  // Будет хранить все найденные credentials
+
+// Список всех возможных credentials с их параметрами
+def possibleCredentials = [
+    'DATABASE_CREDS': [usernameVar: 'db_user', passwordVar: 'db_pass'],
+    'FTP_CREDS': [usernameVar: 'ftp_user', passwordVar: 'ftp_pass'],
+    'API_CREDS': [apiKeyVar: 'api_key']  // Пример для single-значения
+]
+
+possibleCredentials.each { credId, vars ->
+    try {
+        if (vars.passwordVar) {  // Для username/password
+            withCredentials([usernamePassword(
+                credentialsId: credId,
+                usernameVariable: vars.usernameVar,
+                passwordVariable: vars.passwordVar
+            )]) {
+                credsMap[vars.usernameVar] = env[vars.usernameVar]
+                credsMap[vars.passwordVar] = env[vars.passwordVar]
+                echo "✅ Успешно загружен ${credId}"
+            }
+        } else {  // Для single-значения (например, API key)
+            withCredentials([string(
+                credentialsId: credId,
+                variable: vars.apiKeyVar
+            )]) {
+                credsMap[vars.apiKeyVar] = env[vars.apiKeyVar]
+                echo "✅ Успешно загружен ${credId}"
+            }
+        }
+    } catch (Exception e) {
+        echo "⚠️ Credential ${credId} не найден, пропускаем"
+    }
 }
 
-// Проверяем FTP_CREDS
-try {
-  withCredentials([usernamePassword(
-    credentialsId: 'FTP_CREDS',
-    usernameVariable: 'FTP_USER',
-    passwordVariable: 'FTP_PASS'
-  )]) {
-    creds['ftp_user'] = env.FTP_USER
-    creds['ftp_pass'] = env.FTP_PASS
-    echo "Found FTP_CREDS credentials"
-  }
-} catch (Exception e) {
-  echo "FTP_CREDS not found, skipping"
-}
-          
-              // Формируем команду с только существующими переменными
-              def extraVars = creds.collect { k, v -> "-e '${k}=${v}'" }.join(' ')
+// Создаем временный YAML-файл
+def varsFile = "/tmp/ansible_vars_${UUID.randomUUID()}.yml"
+writeYaml file: varsFile, data: credsMap, overwrite: true
+                  
 
               sh """
-                  ansible-playbook -i hosts/psi ${extraVars} deploy-book-01.yml
+                  ansible-playbook -i hosts/psi -e @${varsFile} deploy-book-01.yml
+                  rm -f ${varsFile}  # Важно: удаляем файл сразу после использования
               """
               }
             }
