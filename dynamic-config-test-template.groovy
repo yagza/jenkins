@@ -82,7 +82,7 @@ timestamps {
                     writeYaml file: 'ansible_cred_vars.yml', data: ansibleVars
                     
                     // Для отладки можно вывести содержимое файла
-                    sh 'cat /tmp/ansible_vars.yml'
+                    sh 'cat ansible_cred_vars.yml'
             }
 
         } catch (Exception e) {
