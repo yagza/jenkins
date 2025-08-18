@@ -10,11 +10,10 @@ timestamps {
 
             stage('Upload Project to Deploy servers') {
                 def remoteServer = 'jenkins@10.0.0.125:~/dynamic-config-test'
-                def sshCommand = "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.java ${remoteServer}"
-                sh "${sshCommand}"
+                sh "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.java ${remoteServer}"
                 echo "Main java uploaded to 10.0.0.125 successfully!"
                 remoteServer = 'jenkins@10.0.0.126:~/dynamic-config-test'
-                sh "${sshCommand}"
+                sh "scp -i /home/jenkins/.ssh/id_rsa_deploy ${env.WORKSPACE}/DnsLookupApp.java ${remoteServer}"
                 echo "Main java uploaded to 10.0.0.126 successfully!"
                 sh "ls -la && pwd"
             }
