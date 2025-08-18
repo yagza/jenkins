@@ -31,7 +31,7 @@ timestamps {
             }
 
            
-            dir("${env.WORKSPACE}/ans") {
+            /*dir("${env.WORKSPACE}/ans") {
               stage('Upload properties to both deploy servers') {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
@@ -44,14 +44,14 @@ timestamps {
                     """
                 }
               }
-            }
+            }*/
 
-            stage('Run app') {
-              sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.125 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
-              sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.126 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
-            }
 
             stage('Something strange') {
+
+                sh "mv /tmp/${PROJECT_NAME}/* hosts"
+                sh "rmdir /tmp/${PROJECT_NAME}"
+                
                     // Читаем файл all.yml
                     def allYml = readYaml file: 'ans/hosts/group_vars/all.yml'
                     
@@ -83,6 +83,16 @@ timestamps {
                     
                     // Для отладки можно вывести содержимое файла
                     sh 'cat ansible_cred_vars.yml'
+
+                    sh """
+                    ansible-playbook -i hosts/psi -e @ansible_cred_vars.yml deploy-book-01.yml
+                    rm -f ansible_cred_vars.yml
+                    """
+            }
+
+            stage('Run app') {
+              sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.125 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
+              sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.126 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
             }
 
         } catch (Exception e) {
