@@ -35,14 +35,39 @@ timestamps {
               stage('Upload properties to both deploy servers') {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
-                withCredentials([
-                    usernamePassword(credentialsId: 'DATABASE_CREDS', usernameVariable: 'db_user', passwordVariable: 'db_password'),
-                    usernamePassword(credentialsId: 'FTP_CREDS', usernameVariable: 'ftp_user', passwordVariable: 'ftp_password')
-                ]) {
-                    sh """
-                    ansible-playbook -i hosts/psi -e 'DB_USERNAME=$db_user' -e 'DB_PASSWORD=$db_password' -e 'FTP_USERNAME=$ftp_user' -e 'FTP_PASSWORD=$ftp_password' deploy-book-01.yml
-                    """
+
+                // Создаем Map для хранения credentials
+                def creds = [:]
+          
+                // Проверяем и добавляем credentials только если они существуют
+                if (credentialsExists('DATABASE_CREDS')) {
+                    withCredentials([usernamePassword(
+                      credentialsId: 'DATABASE_CREDS',
+                      usernameVariable: 'DB_USER',
+                      passwordVariable: 'DB_PASS'
+                    )]) {
+                      creds['db_user'] = env.DB_USER
+                      creds['db_pass'] = env.DB_PASS
+                    }
                 }
+          
+              if (credentialsExists('FTP_CREDS')) {
+                withCredentials([usernamePassword(
+                  credentialsId: 'FTP_CREDS',
+                  usernameVariable: 'FTP_USER',
+                  passwordVariable: 'FTP_PASS'
+                )]) {
+                  creds['ftp_user'] = env.FTP_USER
+                  creds['ftp_pass'] = env.FTP_PASS
+                }
+              }
+          
+              // Формируем команду с только существующими переменными
+              def extraVars = creds.collect { k, v -> "-e '${k}=${v}'" }.join(' ')
+
+              sh """
+                  ansible-playbook -i hosts/psi ${extraVars} deploy-book-01.yml
+              """
               }
             }
 
