@@ -73,7 +73,7 @@ def loadCredentials() {
         }
     }
 }
-                  
+                    loadCredentials()
                     def varsFile = "ansible_vars_${BUILD_ID}.yml"
                     writeYaml file: varsFile, data: credsMap
                   
