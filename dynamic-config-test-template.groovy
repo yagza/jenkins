@@ -1,4 +1,3 @@
-
 timestamps {
     node(JenkinsSlaveNode) {
 
@@ -36,58 +35,16 @@ timestamps {
               stage('Upload properties to both deploy servers') {
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
                 sh "rmdir /tmp/${PROJECT_NAME}"
-
-
-  
-
-
-                def credsMap = [:] // Здесь будут храниться все credentials
-
-                // Определяем все возможные credentials и их параметры
-                def possibleCredentials = [
-                    'DATABASE_CREDS': [type: 'usernamePassword', vars: ['db_user', 'db_pass']],
-                    'FTP_CREDS': [type: 'usernamePassword', vars: ['ftp_user', 'ftp_pass']],
-                    'API_KEY': [type: 'string', vars: ['api_key']]
-                ]
-
-                // Загрузка credentials
-                possibleCredentials.each { credId, params ->
-                    try {
-                        if(params.type == 'usernamePassword') {
-                            withCredentials([usernamePassword(
-                                credentialsId: credId,
-                                usernameVariable: params.vars[0],
-                                passwordVariable: params.vars[1]
-                            )]) {
-                                credsMap[params.vars[0]] = env[params.vars[0]]
-                                credsMap[params.vars[1]] = env[params.vars[1]]
-                                echo "✅ Успешно загружен ${credId}"
-                            }
-                        } else if(params.type == 'string') {
-                            withCredentials([string(
-                                credentialsId: credId,
-                                variable: params.vars[0]
-                            )]) {
-                                credsMap[params.vars[0]] = env[params.vars[0]]
-                                echo "✅ Успешно загружен ${credId}"
-                            }
-                        }
-                    } catch(Exception e) {
-                        echo "⚠️ Credential ${credId} не найден, пропускаем"
-                    }
+                withCredentials([
+                    usernamePassword(credentialsId: 'DATABASE_CREDS', usernameVariable: 'db_user', passwordVariable: 'db_password'),
+                    usernamePassword(credentialsId: 'FTP_CREDS', usernameVariable: 'ftp_user', passwordVariable: 'ftp_password')
+                ]) {
+                    sh """
+                    ansible-playbook -i hosts/psi -e 'DB_USERNAME=$db_user' -e 'DB_PASSWORD=$db_password' -e 'FTP_USERNAME=$ftp_user' -e 'FTP_PASSWORD=$ftp_password' deploy-book-01.yml
+                    """
                 }
-
-                def varsFile = "ansible_vars_${BUILD_ID}.yml"
-                writeYaml file: varsFile, data: credsMap
-              
-                sh """
-                    ansible-playbook -i hosts/psi -e @${varsFile} deploy-book-01.yml
-                    rm -f ${varsFile}
-                """
+              }
             }
-                  
-
-           }
 
             stage('Run app') {
               sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.125 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
