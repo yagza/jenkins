@@ -46,7 +46,7 @@ timestamps {
               }
             }*/
 
-
+            dir("${env.WORKSPACE}/ans") {
             stage('Something strange') {
 
                 sh "mv /tmp/${PROJECT_NAME}/* hosts"
@@ -88,6 +88,7 @@ timestamps {
                     ansible-playbook -i hosts/psi -e @ansible_cred_vars.yml deploy-book-01.yml
                     rm -f ansible_cred_vars.yml
                     """
+            }
             }
 
             stage('Run app') {
