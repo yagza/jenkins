@@ -39,7 +39,11 @@ timestamps {
                     usernamePassword(credentialsId: 'DATABASE_CREDS', usernameVariable: 'db_user', passwordVariable: 'db_password'),
                     usernamePassword(credentialsId: 'FTP_CREDS', usernameVariable: 'ftp_user', passwordVariable: 'ftp_password')
                 ]) {
-                    sh "ansible-playbook -i hosts/psi -e 'DB_USERNAME=$db_user' -e 'DB_PASSWORD=$db_password' deploy-book-01.yml"
+                    sh """
+                    export DB_USERNAME=$db_user
+                    export DB_PASSWORD=$db_password
+                    ansible-playbook -i hosts/psi deploy-book-01.yml
+                    """
                 }
               }
             }
