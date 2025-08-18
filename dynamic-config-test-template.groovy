@@ -49,7 +49,41 @@ timestamps {
             stage('Run app') {
               sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.125 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
               sh "ssh -i /home/jenkins/.ssh/id_rsa_deploy 10.0.0.126 'cd ~/dynamic-config-test && javac DnsLookupApp.java && java DnsLookupApp'"
-            }            
+            }
+
+            stage('Something strange') {
+                    // Читаем файл all.yml
+                    def allYml = readYaml file: 'ans/hosts/group_vars/all.yml'
+                    
+                    // Получаем список credentials
+                    def credsList = allYml.Credentials
+                    
+                    // Создаем map для хранения переменных
+                    def ansibleVars = [:]
+                    
+                    // Обрабатываем каждый credential
+                    credsList.each { credId ->
+                        // Извлекаем компонент из имени credential (удаляем _CREDS)
+                        def component = credId.replace('_CREDS', '')
+                        
+                        // Используем withCredentials для получения значений
+                        withCredentials([usernamePassword(
+                            credentialsId: credId,
+                            usernameVariable: 'USERNAME',
+                            passwordVariable: 'PASSWORD'
+                        )]) {
+                            // Сохраняем значения в map
+                            ansibleVars["${component}_USERNAME"] = env.USERNAME
+                            ansibleVars["${component}_PASSWORD"] = env.PASSWORD
+                        }
+                    }
+                    
+                    // Записываем переменные в файл
+                    writeYaml file: 'ansible_cred_vars.yml', data: ansibleVars
+                    
+                    // Для отладки можно вывести содержимое файла
+                    sh 'cat /tmp/ansible_vars.yml'
+            }
 
         } catch (Exception e) {
           echo "Pipeline failed: ${e.getMessage()}"
