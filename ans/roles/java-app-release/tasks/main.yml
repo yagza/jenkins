@@ -4,3 +4,5 @@
   ansible.builtin.template:
     src: "{{ playbook_dir }}/hosts/templates/example.conf.j2"
     dest: dynamic-config-test/DnsLookupApp.properties
+  vars:
+    TEMPLATE_FILE_NAME: "hosts/host_vars/{{ SOME_HOST }}.j2"
