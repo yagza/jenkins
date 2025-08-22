@@ -75,7 +75,7 @@ timestamps {
                     sh 'cat ansible_cred_vars.yml'
 
                     sh """
-                    ansible-playbook -i hosts/psi -e @ansible_cred_vars.yml deploy-book-01.yml
+                    ansible-playbook -i hosts/psi -e @ansible_cred_vars.yml -e 'SOME_HOST=my_host_02' deploy-book-01.yml
                     rm -f ansible_cred_vars.yml
                     """
                 }
