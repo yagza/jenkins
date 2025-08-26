@@ -7,10 +7,11 @@ timestamps {
           [path: 'team/btccpl', engineVersion: 2, secretValues: [
             [envVar: 'SECRET_1', vaultKey: 'some_name'],
             [envVar: 'SECRET_2', vaultKey: 'team_name'],
-            [envVar: 'SECRET_3', vaultKey: 'ssh_name']]
+            [envVar: 'SECRET_3', vaultKey: 'ssh_name'],
+            [envVar: 'githubcreads', vaultKey: 'some_ssh_key']]
           ],
           [path: 'secret/ssh-key', engineVersion: 2, secretValues: [
-            [envVar: 'githubcreads', vaultKey: 'github']]
+            [envVar: 'psogithubcreads', vaultKey: 'github']]
           ]
         ]
 
