@@ -26,14 +26,13 @@ timestamps {
     
       stage ('Git Checkout using secret from vault') {
         withVault([configuration: vault_configuration, vaultSecrets: secrets]) {
-          writeFile(file: 'id_rsa', text: githubcreads)
+          writeFile(file: 'id_rsa_tmp', text: githubcreads)
             sh '''
             mkdir -p ~/.ssh
-            mv id_rsa ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
+            chmod 600 id_rsa_tmp
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             chmod 600 ~/.ssh/known_hosts
-            git clone git@github.com:yagza/simple-php-website.git
+            git -c 'core.sshCommand=ss -i id_rsa_tmp' clone git@github.com:yagza/simple-php-website.git --branch main
             ls -la simple-php-website
             '''
         }
