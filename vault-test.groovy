@@ -32,7 +32,7 @@ timestamps {
             chmod 600 id_rsa_tmp
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             chmod 600 ~/.ssh/known_hosts
-            git -c 'core.sshCommand=ss -i id_rsa_tmp' clone git@github.com:yagza/simple-php-website.git --branch main
+            git -c 'core.sshCommand=ssh -i id_rsa_tmp' clone git@github.com:yagza/simple-php-website.git --branch main
             ls -la simple-php-website
             '''
         }
